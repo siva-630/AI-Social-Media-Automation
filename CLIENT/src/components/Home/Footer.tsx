@@ -14,7 +14,7 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="lg:col-span-2">
                         <Link to="/" onClick={() => scrollTo(0, 0)} className="inline-flex items-center gap-2 mb-5">
-                            <img src="/logo.svg" alt="logo" className="size-6" />
+                            <img src="/logo.png" alt="logo" className="size-6" />
                             <span className="font-medium font-serif text-xl text-gray-800">Scheduler</span>
                         </Link>
                         <p className="text-sm text-gray-500 leading-relaxed max-w-xs">The AI-powered social media scheduler that helps creators and teams grow faster with less effort.</p>

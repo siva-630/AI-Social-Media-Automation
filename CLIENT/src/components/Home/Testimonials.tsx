@@ -29,12 +29,12 @@ export default function Testimonials() {
         <section className="py-24 bg-slate-50">
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
                 <div className="text-center mb-14">
-                    <div className="mb-6 inline-flex items-center gap-1.5 bg-red-500/10 border border-red-500/15 text-red-500 text-[11px] font-medium tracking-[0.06em] uppercase px-3.5 py-1.5 rounded-full">
+                    <div className="mb-6 inline-flex items-center gap-1.5 bg-violet-500/10 border border-violet-500/15 text-violet-500 text-[11px] font-medium tracking-[0.06em] uppercase px-3.5 py-1.5 rounded-full">
                         <StarIcon className="size-3 " />
                         Testimonials
                     </div>
                     <h2 className="font-serif font-medium text-4xl sm:text-5xl leading-tight text-gray-900">
-                        Loved by <span className="text-red-400 ">creators &amp; teams</span>
+                        Loved by <span className="text-violet-400 ">creators &amp; teams</span>
                     </h2>
                     <p className="mt-5 text-gray-500 max-w-md mx-auto">Join thousands of people who automate their social media with Scheduler.</p>
                 </div>

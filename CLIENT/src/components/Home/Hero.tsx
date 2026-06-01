@@ -12,16 +12,16 @@ export default function Hero() {
 
             <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-12 text-center">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 text-sm px-3.5 py-1.5 rounded-full mb-8">
-                    <span className="size-1.5 bg-red-400 rounded-full" />
-                    AI-Powered Social Media Automation
+                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-violet-500 text-sm px-3.5 py-1.5 rounded-full mb-8">
+                    <span className="size-1.5 bg-violet-400 rounded-full" />
+                    Automated Content Creation & Distribution
                 </div>
 
                 {/* Headline */}
                 <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl xl:text-8xl text-slate-900">
-                    Schedule smarter.
+                Plan Once.
                     <br />
-                    <span className="text-red-400 italic">Grow faster.</span>
+                    <span className="text-violet-600 italic">Publish Everywhere.</span>
                 </h1>
 
                 {/* Subheadline */}
@@ -29,7 +29,7 @@ export default function Hero() {
 
                 {/* CTAs */}
                 <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <Link to="/login" className="bg-red-500 text-white rounded-full font-medium hover:bg-red-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
+                    <Link to="/login" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
                         Start for free <ArrowRightIcon className="size-4" />
                     </Link>
                     <a href="#how-it-works" className="bg-transparent text-[#333] border-[1.5px] border-black/10 rounded-full font-medium hover:bg-black/5 hover:border-black/20 inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto backdrop-blur justify-center transition-all">
