@@ -25,7 +25,7 @@ export default function Login() {
                 <div className="bg-white rounded-2xl shadow-sm p-8">
                     <div className="flex flex-col items-center mb-8">
                         <Link to="/" className="flex items-center gap-2">
-                            <img src="/logo.svg" alt="Logo" className="size-6.5" />
+                            <img src="/logo.png" alt="Logo" className="size-6.5" />
                             <h1 className="text-2xl">Scheduler</h1>
                         </Link>
                         <p className="text-slate-500 text-sm mt-1">Sign in to your Dashboard</p>
@@ -55,7 +55,7 @@ export default function Login() {
                             </div>
                         </div>
 
-                        <button type="submit" disabled={loading} className="w-full py-2.5 px-4 bg-linear-to-r from-red-600 to-red-500 text-white rounded-full text-sm transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                        <button type="submit" disabled={loading} className="w-full py-2.5 px-4 bg-linear-to-r from-violet-600 to-violet-500 text-white rounded-full text-sm transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                             {loading ? (
                                 "Signing in..."
                             ) : (
@@ -70,14 +70,14 @@ export default function Login() {
                         {loginState ? (
                             <>
                                 Don't have an account?{" "}
-                                <button onClick={() => setLoginState(false)} className="text-red-600 hover:text-red-700">
+                                <button onClick={() => setLoginState(false)} className="text-violet-600 hover:text-violet-700">
                                     Create one free
                                 </button>
                             </>
                         ) : (
                             <>
                                 Already have an account?{" "}
-                                <button onClick={() => setLoginState(true)} className="text-red-600 hover:text-red-700">
+                                <button onClick={() => setLoginState(true)} className="text-violet-600 hover:text-violet-700">
                                     Sign In
                                 </button>
                             </>
