@@ -14,7 +14,7 @@ const Layout = () => {
 
     const location = useLocation()
 
-    const title = pageTitles[location.pathname] || "social ai"
+    const title = pageTitles[location.pathname] || "Social ai"
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     return (

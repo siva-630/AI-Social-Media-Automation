@@ -12,7 +12,7 @@ export default function Hero() {
 
             <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-12 text-center">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-violet-500 text-sm px-3.5 py-1.5 rounded-full mb-8">
+                <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-100 text-violet-500 text-sm px-3.5 py-1.5 rounded-full mb-8">
                     <span className="size-1.5 bg-violet-400 rounded-full" />
                     Automated Content Creation & Distribution
                 </div>
@@ -45,7 +45,7 @@ export default function Hero() {
                 <div className="rounded-t-2xl overflow-hidden border border-gray-200 border-b-0">
                     {/* Browser chrome */}
                     <div className="flex items-center gap-2 px-4 py-3" style={{ background: "#f0f0f0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                        <div className="w-3 h-3 rounded-full bg-red-400" />
+                        <div className="w-3 h-3 rounded-full bg-violet-400" />
                         <div className="w-3 h-3 rounded-full bg-amber-400" />
                         <div className="w-3 h-3 rounded-full bg-emerald-400" />
                         <div className="flex-1 mx-4 rounded-md h-5 max-w-xs bg-white/80" />

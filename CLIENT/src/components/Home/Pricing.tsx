@@ -13,7 +13,7 @@ const pricingPlans = [
     },
     {
         name: "Pro",
-        price: "$29",
+        price: "₹399",
         period: "/month",
         description: "Everything you need to grow and automate your social presence.",
         features: ["Unlimited accounts", "Unlimited scheduling", "AI content (200 credits/mo)", "Priority support"],
@@ -22,7 +22,7 @@ const pricingPlans = [
     },
     {
         name: "Agency",
-        price: "$79",
+        price: "₹599",
         period: "/month",
         description: "For teams and agencies managing multiple brands at scale.",
         features: ["Everything in Pro", "5 team members", "Unlimited AI credits", "Custom AI personas", "Dedicated support"],
