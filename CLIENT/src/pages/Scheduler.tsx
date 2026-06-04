@@ -20,15 +20,6 @@ const Scheduler = () => {
     const [mediaPreview, setMediaPreview] = useState<{ url: string; type: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     
-    // Cleanup object URL on unmount
-    useEffect(() => {
-        return () => {
-            if (mediaPreview) {
-                URL.revokeObjectURL(mediaPreview.url);
-            }
-        };
-    }, [mediaPreview]);
-    
     // Sort posts by date for better visualization, assuming newer first or by scheduledFor
     const sortedPosts = [...dummyPostsData].sort((a, b) => 
         new Date(b.scheduledFor).getTime() - new Date(a.scheduledFor).getTime()
@@ -60,9 +51,6 @@ const Scheduler = () => {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            if (mediaPreview) {
-                URL.revokeObjectURL(mediaPreview.url);
-            }
             const file = e.target.files[0];
             setMediaPreview({ url: URL.createObjectURL(file), type: file.type });
         }

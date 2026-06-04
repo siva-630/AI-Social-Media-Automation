@@ -66,13 +66,6 @@ const AIComposer = () => {
         if (!scheduleDate) errors.push('Date');
         if (!scheduleTime) errors.push('Time');
 
-        if (scheduleDate && scheduleTime) {
-            const combinedDateTime = new Date(`${scheduleDate}T${scheduleTime}:00`);
-            if (combinedDateTime < new Date()) {
-                errors.push('Date/Time (Must be in the future)');
-            }
-        }
-
         if (errors.length > 0) {
             setScheduleErrors(errors);
             return;
@@ -126,12 +119,9 @@ const AIComposer = () => {
                 <div className="flex justify-end items-center gap-4">
                     {/* AI Image Toggle */}
                     <div className="flex items-center gap-3 bg-indigo-50/80 px-4 py-2 rounded-[0.8rem]">
-                        <span className="text-[13px] font-semibold text-slate-800" id="ai-toggle-label">AI Image</span>
+                        <span className="text-[13px] font-semibold text-slate-800">AI Image</span>
                         <button 
                             onClick={() => setAiImage(!aiImage)}
-                            role="switch"
-                            aria-checked={aiImage}
-                            aria-labelledby="ai-toggle-label"
                             className={`w-10 h-[22px] rounded-full transition-colors relative shadow-inner ${aiImage ? 'bg-indigo-500' : 'bg-gray-300'}`}
                         >
                             <div className={`w-[18px] h-[18px] bg-white rounded-full absolute top-[2px] transition-all shadow-sm ${aiImage ? 'left-[20px]' : 'left-[2px]'}`}></div>
@@ -204,11 +194,7 @@ const AIComposer = () => {
 
                                 {post.mediaUrl && (
                                     <div className="rounded-xl overflow-hidden mb-4 w-full h-32 bg-slate-50 shrink-0">
-                                        {post.mediaType?.startsWith('video') ? (
-                                            <video src={post.mediaUrl} controls muted playsInline className="w-full h-full object-cover" aria-label="Generated Video" />
-                                        ) : (
-                                            <img src={post.mediaUrl} alt="AI Generation" className="w-full h-full object-cover" />
-                                        )}
+                                        <img src={post.mediaUrl} alt="AI Generation" className="w-full h-full object-cover" />
                                     </div>
                                 )}
 
@@ -257,11 +243,7 @@ const AIComposer = () => {
                                 <p className="text-slate-700 text-[15px] leading-relaxed">{selectedPost.content}</p>
                                 {selectedPost.mediaUrl && (
                                     <div className="mt-4 rounded-xl overflow-hidden max-h-[300px] border border-gray-200">
-                                        {selectedPost.mediaType?.startsWith('video') ? (
-                                            <video src={selectedPost.mediaUrl} controls muted playsInline className="w-full h-full object-cover" aria-label="Generated Video" />
-                                        ) : (
-                                            <img src={selectedPost.mediaUrl} alt="Generated Media" className="w-full h-full object-cover" />
-                                        )}
+                                        <img src={selectedPost.mediaUrl} alt="Generated Media" className="w-full h-full object-cover" />
                                     </div>
                                 )}
                             </div>
@@ -280,8 +262,6 @@ const AIComposer = () => {
                                             <button
                                                 key={platform.id}
                                                 onClick={() => togglePlatform(platform.id)}
-                                                aria-label={platform.name}
-                                                aria-pressed={isSelected}
                                                 className={`w-12 h-12 rounded-xl border transition-all duration-200 flex items-center justify-center
                                                     ${isSelected ? 'border-indigo-500 bg-indigo-50 text-indigo-600 shadow-sm' : 'border-gray-200 text-slate-400 hover:border-indigo-200'}
                                                     ${scheduleErrors.includes('Channels') && !isSelected ? 'border-red-200 text-red-400' : ''}`}
