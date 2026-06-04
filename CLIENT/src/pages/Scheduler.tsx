@@ -17,7 +17,7 @@ const Scheduler = () => {
     });
     
     // Image upload state
-    const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+    const [mediaPreview, setMediaPreview] = useState<{ url: string; type: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     
     // Sort posts by date for better visualization, assuming newer first or by scheduledFor
@@ -52,11 +52,14 @@ const Scheduler = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setMediaPreview(URL.createObjectURL(file));
+            setMediaPreview({ url: URL.createObjectURL(file), type: file.type });
         }
     };
 
     const handleRemoveMedia = () => {
+        if (mediaPreview) {
+            URL.revokeObjectURL(mediaPreview.url);
+        }
         setMediaPreview(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -153,7 +156,11 @@ const Scheduler = () => {
                     />
                     {mediaPreview ? (
                         <div className="relative w-full h-20 rounded-2xl border border-gray-200 overflow-hidden group">
-                            <img src={mediaPreview} alt="Preview" className="w-full h-full object-cover" />
+                            {mediaPreview.type.startsWith('video/') ? (
+                                <video src={mediaPreview.url} className="w-full h-full object-cover" controls />
+                            ) : (
+                                <img src={mediaPreview.url} alt="Preview" className="w-full h-full object-cover" />
+                            )}
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                                 <button 
                                     onClick={handleRemoveMedia}
