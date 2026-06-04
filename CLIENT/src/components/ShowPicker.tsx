@@ -32,15 +32,15 @@ const ShowPicker = ({ isOpen, onClose, connectedPlatforms, onConnect }: ShowPick
                             return (
                                 <div key={platform.id} className="flex items-center justify-between p-4 rounded-xl border border-red-200 bg-red-50/50">
                                     <div className="flex items-center gap-4">
-                                        <div className="text-red-500">
+                                        <div className="text-violet-500">
                                             <Icon className="w-7 h-7" />
                                         </div>
                                         <div>
-                                            <h3 className="font-medium text-red-500">{platform.name}</h3>
+                                            <h3 className="font-medium text-violet-500">{platform.name}</h3>
                                             <p className="text-sm text-slate-500 mt-0.5">Already connected</p>
                                         </div>
                                     </div>
-                                    <CheckCircle2 className="w-5 h-5 text-red-500" />
+                                    <CheckCircle2 className="w-5 h-5 text-violet-500" />
                                 </div>
                             );
                         }
