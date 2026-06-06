@@ -22,7 +22,7 @@ const ShowPicker = ({ isOpen, onClose, connectedPlatforms, onConnect }: ShowPick
                     </button>
                 </div>
                 
-                
+                {/*  */}
                 <div className="p-6 space-y-3">
                     {PLATFORMS.map((platform: any) => {
                         const isConnected = connectedPlatforms.includes(platform.id);
