@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { History, ArrowRight, X, Calendar, Clock, Loader2, AlertCircle } from 'lucide-react';
 import { PLATFORMS } from '../assets/assets';
 import { toast } from 'react-toastify';

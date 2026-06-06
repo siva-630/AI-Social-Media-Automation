@@ -22,9 +22,9 @@ const PlatformPicker = ({ isOpen, onClose, connectedPlatforms, onConnect }: Plat
                     </button>
                 </div>
 
-                {/* Body */}
+
                 <div className="p-6 space-y-3">
-                    {PLATFORMS.map((platform: Platform) => {
+                    {PLATFORMS.map((platform: any) => {
                         const isConnected = connectedPlatforms.includes(platform.id);
                         const Icon = platform.icon;
 
