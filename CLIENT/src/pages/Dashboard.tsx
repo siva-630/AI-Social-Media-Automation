@@ -1,33 +1,37 @@
 import { ActivityIcon, CheckCircleIcon, ClockIcon, SendIcon, Share2Icon, TrendingUpIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-
-import { dummyPostsData,dummyAccountsData,dummyActivityData, } from "../assets/assets";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ scheduled: 0, published: 0, connectedAccounts: 0 })
-  const [activities, setActivities] = useState<any[]>([48675])
+  const [activities, setActivities] = useState<any[]>([])
   
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
-        const [postRes, accountres, acitivityres] = [{ data: dummyPostsData }, { data: dummyAccountsData }, { data: dummyActivityData }]
-        const posts = postRes.data;
-        setStats({
-          scheduled: posts.filter((p: any) => p.status === 'scheduled').length,
-          published: posts.filter((p: any) => p.status === 'published').length,
-          connectedAccounts:accountres.data.filter((a:any) => a.status === 'connected') .length
-          
-        })
-        setActivities(acitivityres.data)
-        
+        const response = await fetch(`http://127.0.0.1:3000/api/dashboard?userId=${userId}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setStats({
+            scheduled: data.stats.scheduled || 0,
+            published: data.stats.published || 0,
+            connectedAccounts: data.stats.connectedAccounts || 0
+          });
+          setActivities(data.activities || []);
+        } else {
+          toast.error("Failed to load dashboard data");
+        }
       } catch (error: any) {
-        console.error("error for fetchDashboardData data",error)
-        
+        console.error("error for fetchDashboardData data", error);
+        toast.error("Error connecting to server");
       }
     }
     fetchDashboardData();
-  },[])
+  }, [])
   const statCards = [
     {
       label: "Scheduled Posts",
@@ -53,7 +57,7 @@ const Dashboard = () => {
   <div>
           <div className="space-y-8">
       <h2 className="text-2xl text-slate-900 ">Good morning</h2>
-      <p className="text-slate-500 text-sm mt-0.5">Here's what is happening with your social accounts today'</p>
+      <p className="text-slate-500 text-sm mt-0.5">Here's what is happening with your social accounts today.</p>
     </div>
       
     
@@ -87,7 +91,7 @@ const Dashboard = () => {
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden ">
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="tex-slate-900 ">Recent Activity</h2>
+          <h2 className="text-slate-900 ">Recent Activity</h2>
           <span className="text-sm text-slate-400 ">{activities.length} events</span>
         </div>
 
@@ -103,7 +107,7 @@ const Dashboard = () => {
         
           
         ) : (
-            <div className="divided-y divide-slate-50">
+            <div className="divide-y divide-slate-50">
               {activities.map((activity) => (
                 <div key={activity._id} className="flex items-start gap-4 px-6 py-4 hover:bg-slate-50/50  transition-colors">
                   <div className="size-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 bg-zinc-100 text-zinc-600">
@@ -111,7 +115,7 @@ const Dashboard = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-center gap-2 mb-1">
-                      <span className="text-xs px-2  py-0.5 rounded-full bg-zin-100 text-zinc-600 ">Published</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600">Published</span>
                       <span className="text-xs text-slate-400 shrink-0">{new Date(activity.createdAt).toLocaleString()}</span>
                     </div>
                     <p className=" text-sm text-slate-600">{activity.description}</p>

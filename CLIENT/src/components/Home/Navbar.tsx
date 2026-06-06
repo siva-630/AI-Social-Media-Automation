@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRightIcon } from "lucide-react";
 
 export default function Navbar() {
-    const { user } = { user: false };
+    const user = !!localStorage.getItem("token");
 
     return (
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">

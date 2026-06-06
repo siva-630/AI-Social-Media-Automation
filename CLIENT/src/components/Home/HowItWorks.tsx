@@ -1,7 +1,7 @@
 import { ArrowRightIcon, CheckCircleIcon } from "lucide-react";
 
 const steps = [
-    { step: "01", title: "Connect Your Accounts", description: "Link your social profiles in seconds. We support Twitter, LinkedIn, Facebook, and Instagram." },
+    { step: "01", title: "Connect Your Accounts", description: "Link your social profiles in seconds. We support LinkedIn, Facebook, and Instagram." },
     { step: "02", title: "Create or Generate Content", description: "Write your own post or let our AI craft a caption and image based on your prompt." },
     { step: "03", title: "Schedule & Publish", description: "Pick a time, select your platforms, and hit schedule. We handle publishing automatically." },
 ];

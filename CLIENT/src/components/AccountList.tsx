@@ -1,5 +1,6 @@
 import { PlusIcon, CheckCircle2, Unplug } from "lucide-react";
 import { PLATFORMS } from "../assets/assets";
+import { useState } from "react";
 
 interface AccountListProps {
   account: any[];
@@ -7,13 +8,14 @@ interface AccountListProps {
 }
 
 const AccountList = ({ account, onDisconnect }: AccountListProps) => {
+  const [disconnectingId, setDisconnectingId] = useState<string | null>(null);
 
   const handleDisconnect = async (accountId: string) => {
-    const confirm = window.confirm("Are you sure you want to disconnect this account?")
-    if (!confirm) return;
-    await onDisconnect(accountId)
+    setDisconnectingId(accountId);
+    await onDisconnect(accountId);
+    setDisconnectingId(null);
   }
-  
+
   if (account.length === 0) {
     return (
       <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center py-20 px-6">
@@ -31,7 +33,7 @@ const AccountList = ({ account, onDisconnect }: AccountListProps) => {
       {account.map((acc) => {
         const platformInfo = PLATFORMS.find(p => p.id === acc.platform);
         const Icon = platformInfo?.icon;
-        
+
         return (
           <div key={acc._id} className="bg-white rounded-xl border border-slate-200 p-4 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-4">
@@ -43,15 +45,20 @@ const AccountList = ({ account, onDisconnect }: AccountListProps) => {
                 <p className="text-sm text-slate-500 capitalize">{platformInfo?.name || acc.platform}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5 text-emerald-500">
                 <CheckCircle2 className="w-4 h-4" />
                 <span className="text-sm font-medium">Connected</span>
               </div>
-              <button 
+              <button
                 onClick={() => handleDisconnect(acc._id)}
-                className="text-slate-500 hover:text-violet-500 transition-colors p-1 rounded-md"
+                disabled={disconnectingId === acc._id}
+                className={`transition-colors p-1.5 rounded-md ${
+                  disconnectingId === acc._id 
+                    ? 'text-violet-600 bg-violet-50 shadow-sm' 
+                    : 'text-slate-500 hover:text-violet-500 hover:bg-slate-50'
+                }`}
                 title="Disconnect account"
               >
                 <Unplug className="w-4 h-4" />

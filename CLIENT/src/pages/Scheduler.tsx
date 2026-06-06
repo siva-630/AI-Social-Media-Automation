@@ -1,12 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { Calendar, Clock, Send, ArrowRight, X, Image as ImageIcon, AlertCircle } from 'lucide-react';
-import { PLATFORMS, dummyPostsData } from '../assets/assets';
+import React, { useState, useRef, useEffect } from 'react';
+import { Calendar, Clock, Send, ArrowRight, X, Image as ImageIcon, AlertCircle, Trash2 } from 'lucide-react';
+import { PLATFORMS } from '../assets/assets';
+import { toast } from 'react-toastify';
 
 const Scheduler = () => {
-    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+    const [selectedPlatforms, setSelectedPlatforms] = useState<any[]>([]);
     const [content, setContent] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
+    const [posts, setPosts] = useState<any[]>([]);
+    const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     
     // Validation states
     const [errors, setErrors] = useState({
@@ -20,20 +24,80 @@ const Scheduler = () => {
     const [mediaPreview, setMediaPreview] = useState<{ url: string; type: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     
-    // Sort posts by date for better visualization, assuming newer first or by scheduledFor
-    const sortedPosts = [...dummyPostsData].sort((a, b) => 
-        new Date(b.scheduledFor).getTime() - new Date(a.scheduledFor).getTime()
+    const fetchPosts = async () => {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:3000/api/posts?userId=${userId}`);
+            if (res.ok) {
+                const data = await res.json();
+                setPosts(data.posts || []);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const userId = localStorage.getItem("userId");
+            if (!userId) return;
+            
+            try {
+                // Fetch connected accounts
+                const accountsRes = await fetch(`http://127.0.0.1:3000/api/social/accounts?userId=${userId}`);
+                if (accountsRes.ok) {
+                    const accountsData = await accountsRes.json();
+                    setConnectedAccounts(accountsData.accounts || []);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            await fetchPosts();
+        };
+        fetchData();
+    }, []);
+
+    const sortedPosts = [...posts].sort((a, b) => 
+        new Date(b.scheduledDate || b.createdAt).getTime() - new Date(a.scheduledDate || a.createdAt).getTime()
     );
 
-    const upcomingPosts = sortedPosts.filter((post: any) => post.status === 'scheduled');
-    const publishedPosts = sortedPosts.filter((post: any) => post.status === 'published');
+    const now = new Date().getTime();
+    const upcomingPosts = sortedPosts.filter((post: any) => {
+        const postTime = new Date(post.scheduledDate || post.createdAt).getTime();
+        return post.status === 'scheduled' && postTime > now;
+    });
+    
+    const publishedPosts = sortedPosts.filter((post: any) => {
+        const postTime = new Date(post.scheduledDate || post.createdAt).getTime();
+        return post.status === 'published' || (post.status === 'scheduled' && postTime <= now);
+    });
 
-    const togglePlatform = (id: string) => {
+    const togglePlatform = (acc: any) => {
+        const accId = acc._id || acc.id;
         setSelectedPlatforms(prev => {
-            const next = prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id];
+            const exists = prev.find(p => (p._id || p.id) === accId);
+            const next = exists ? prev.filter(p => (p._id || p.id) !== accId) : [...prev, acc];
             if (next.length > 0) setErrors(e => ({ ...e, platforms: false }));
             return next;
         });
+    };
+
+    const handleDelete = async (postId: string) => {
+        try {
+            const res = await fetch(`http://127.0.0.1:3000/api/posts/${postId}`, {
+                method: "DELETE"
+            });
+            if (res.ok) {
+                toast.success("Post deleted successfully");
+                await fetchPosts();
+            } else {
+                toast.error("Failed to delete post");
+            }
+        } catch (err) {
+            console.error("Error deleting post:", err);
+            toast.error("Error connecting to server");
+        }
     };
 
     const formatDate = (dateString: string) => {
@@ -66,7 +130,7 @@ const Scheduler = () => {
         }
     };
 
-    const handleSchedule = () => {
+    const handleSchedule = async () => {
         const newErrors = {
             platforms: selectedPlatforms.length === 0,
             content: content.trim() === '',
@@ -77,13 +141,59 @@ const Scheduler = () => {
         setErrors(newErrors);
 
         if (!Object.values(newErrors).some(Boolean)) {
-            alert('Post scheduled successfully!');
-            // Reset form
-            setSelectedPlatforms([]);
-            setContent('');
-            setDate('');
-            setTime('');
-            handleRemoveMedia();
+            setIsLoading(true);
+            try {
+                const userId = localStorage.getItem("userId");
+                
+                // Read base64 if media exists
+                let mediaBase64 = null;
+                if (fileInputRef.current && fileInputRef.current.files && fileInputRef.current.files[0]) {
+                    const file = fileInputRef.current.files[0];
+                    mediaBase64 = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result as string);
+                        reader.readAsDataURL(file);
+                    });
+                }
+
+                const localDateTime = new Date(`${date}T${time}`);
+                // Publish instantly only if the selected time is strictly in the past or exactly now
+                const isPublishNow = localDateTime.getTime() <= new Date().getTime();
+                
+                const payload = {
+                    userId,
+                    content,
+                    platforms: selectedPlatforms.map(p => ({ platform: p.platform, accountId: p._id || p.id })),
+                    scheduledDate: `${date}T${time}:00`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    mediaBase64,
+                    publishNow: isPublishNow
+                };
+
+                const res = await fetch("http://127.0.0.1:3000/api/posts/schedule", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    toast.success(isPublishNow ? 'Post published successfully!' : 'Post scheduled successfully!');
+                    setSelectedPlatforms([]);
+                    setContent('');
+                    setDate('');
+                    setTime('');
+                    handleRemoveMedia();
+                    await fetchPosts();
+                } else {
+                    const errorData = await res.json();
+                    toast.error(`Failed to schedule post: ${errorData.message}`);
+                }
+            } catch (err) {
+                console.error("Error scheduling:", err);
+                toast.error("An error occurred while scheduling.");
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -100,16 +210,19 @@ const Scheduler = () => {
                         <label className="text-xs font-bold text-gray-400 tracking-wider">PLATFORMS</label>
                         {errors.platforms && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Required</span>}
                     </div>
-                    <div className={`flex gap-2.5 p-1 -m-1 rounded-xl transition-all ${errors.platforms ? 'bg-red-50 ring-1 ring-red-300' : ''}`}>
-                        {PLATFORMS.map(platform => {
-                            const Icon = platform.icon;
-                            const isSelected = selectedPlatforms.includes(platform.id);
+                    <div className={`flex flex-wrap gap-2.5 p-1 -m-1 rounded-xl transition-all ${errors.platforms ? 'bg-red-50 ring-1 ring-red-300' : ''}`}>
+                        {connectedAccounts.length === 0 && <span className="text-sm text-gray-500 py-1">No connected accounts. Please connect an account in the dashboard.</span>}
+                        {connectedAccounts.map(acc => {
+                            const platformDef = PLATFORMS.find(p => p.id === acc.platform);
+                            const Icon = platformDef?.icon || Calendar;
+                            const accId = acc._id || acc.id;
+                            const isSelected = selectedPlatforms.some(p => (p._id || p.id) === accId);
                             return (
                                 <button
-                                    key={platform.id}
-                                    onClick={() => togglePlatform(platform.id)}
-                                    title={platform.name}
-                                    className={`w-10 h-10 rounded-xl border transition-all duration-200 flex items-center justify-center
+                                    key={accId}
+                                    onClick={() => togglePlatform(acc)}
+                                    title={acc.name || acc.platform}
+                                    className={`w-10 h-10 rounded-xl border transition-all duration-200 flex items-center justify-center relative group
                                         ${isSelected ? 'border-indigo-500 bg-indigo-50 text-indigo-600 shadow-sm' : 'border-gray-200 text-gray-500 bg-white hover:bg-gray-50 hover:border-gray-300'}
                                         ${errors.platforms && !isSelected ? 'border-red-200 text-red-400' : ''}`}
                                 >
@@ -225,10 +338,11 @@ const Scheduler = () => {
                 {/* Button */}
                 <button 
                     onClick={handleSchedule}
-                    className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-sm shadow-indigo-200"
+                    disabled={isLoading}
+                    className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-sm shadow-indigo-200 disabled:opacity-70"
                 >
-                    Schedule Post
-                    <ArrowRight className="w-4 h-4" />
+                    {isLoading ? 'Scheduling...' : 'Schedule Post'}
+                    {!isLoading && <ArrowRight className="w-4 h-4" />}
                 </button>
                 </div>
             </div>
@@ -257,10 +371,17 @@ const Scheduler = () => {
                                             <PlatformIcon className="w-4 h-4" />
                                         </div>
                                         <div className="flex items-center gap-3 text-[11px] text-gray-400 font-medium tracking-wide">
-                                            {post.mediaUrl && (
+                                            {(post.mediaUrls && post.mediaUrls.length > 0) && (
                                                 <span className="bg-gray-100/80 text-gray-600 px-2.5 py-1 rounded-md">Image</span>
                                             )}
-                                            <span>{formatDate(post.scheduledFor)}</span>
+                                            <span>{formatDate(post.scheduledDate || post.scheduledFor)}</span>
+                                            <button 
+                                                onClick={() => handleDelete(post._id)}
+                                                className="ml-1 p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded transition-colors"
+                                                title="Remove Post"
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
                                         </div>
                                     </div>
                                     <p className="text-[13px] text-gray-600 line-clamp-2 leading-relaxed whitespace-pre-line pr-4">
@@ -297,10 +418,17 @@ const Scheduler = () => {
                                                 <PlatformIcon className="w-3.5 h-3.5" />
                                             </div>
                                             <div className="flex items-center gap-2.5 text-[10px] text-gray-400 font-medium tracking-wide">
-                                                <span>{formatDate(post.scheduledFor)}</span>
+                                                <span>{formatDate(post.scheduledDate || post.scheduledFor)}</span>
                                                 <span className="bg-[#e6fcf5] text-[#20c997] px-2 py-0.5 rounded-full font-semibold border border-[#b2f2bb]/40">
                                                     Published
                                                 </span>
+                                                <button 
+                                                    onClick={() => handleDelete(post._id)}
+                                                    className="ml-1 p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded transition-colors"
+                                                    title="Remove Post"
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
                                             </div>
                                         </div>
                                         <p className="text-[12.5px] text-gray-600 line-clamp-2 leading-relaxed whitespace-pre-line pr-2">

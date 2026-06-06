@@ -3,11 +3,18 @@ import { NavLink, useLocation } from "react-router-dom"
 
 export const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val: boolean) => void }) => {
 
-  const { logout, user } = {
-    logout: () => {
-      window.location.href="/"
-    },user:{name:"siva",email:"123@gmail.com"}
-  }
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userEmail");
+    window.location.href = "/";
+  };
+
+  const user = {
+    name: localStorage.getItem("userName") || "User",
+    email: localStorage.getItem("userEmail") || ""
+  };
   const location = useLocation()
   const navItems = [
     { name: "Dashboard", icon: LayoutDashboardIcon, path: '/dashboard' },

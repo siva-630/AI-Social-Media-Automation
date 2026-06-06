@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { History, ArrowRight, X, Calendar, Clock, Loader2, AlertCircle } from 'lucide-react';
-import { dummyGenerationData, PLATFORMS } from '../assets/assets';
+import { PLATFORMS } from '../assets/assets';
+import { toast } from 'react-toastify';
 
 const TONES = ['Professional', 'Creative', 'Funny', 'Minimalist', 'Excited'];
 
@@ -21,11 +22,39 @@ const AIComposer = () => {
     const [aiImage, setAiImage] = useState(true);
     const [selectedTone, setSelectedTone] = useState('Professional');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [generations, setGenerations] = useState<GenerationPost[]>([]);
+    const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userId = localStorage.getItem("userId");
+                if (!userId) return;
+                
+                // Fetch generations
+                const res = await fetch(`http://127.0.0.1:3000/api/generations/user?userId=${userId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setGenerations(data.generations || []);
+                }
+
+                // Fetch connected accounts
+                const accountsRes = await fetch(`http://127.0.0.1:3000/api/social/accounts?userId=${userId}`);
+                if (accountsRes.ok) {
+                    const accountsData = await accountsRes.json();
+                    setConnectedAccounts(accountsData.accounts || []);
+                }
+            } catch (err) {
+                console.error("Failed to fetch data:", err);
+            }
+        };
+        fetchData();
+    }, []);
 
     // Modal state
     const [selectedPost, setSelectedPost] = useState<GenerationPost | null>(null);
     const [isScheduling, setIsScheduling] = useState(false);
-    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+    const [selectedPlatforms, setSelectedPlatforms] = useState<any[]>([]);
     const [scheduleDate, setScheduleDate] = useState('');
     const [scheduleTime, setScheduleTime] = useState('');
     const [scheduleErrors, setScheduleErrors] = useState<string[]>([]);
@@ -34,14 +63,23 @@ const AIComposer = () => {
         if (!idea.trim()) return;
         setIsGenerating(true);
         try {
-            // Simulate parsing data and sending to backend asynchronously
-            const payload = { idea, tone: selectedTone, useAiImage: aiImage };
-            console.log("Generating with payload:", payload);
-            
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            setIdea('');
+            const userId = localStorage.getItem("userId");
+            const response = await fetch("http://127.0.0.1:3000/api/generations/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: idea, tone: selectedTone, generateImage: aiImage, userId })
+            });
+            const data = await response.json();
+            if (response.ok && data.generation) {
+                setGenerations([data.generation, ...generations]);
+                setIdea('');
+                toast.success("Content generated successfully!");
+            } else {
+                toast.error(data.message || "Failed to generate content");
+            }
         } catch (error) {
             console.error("Failed to generate:", error);
+            toast.error("Error connecting to server");
         } finally {
             setIsGenerating(false);
         }
@@ -73,29 +111,47 @@ const AIComposer = () => {
 
         setIsScheduling(true);
         try {
-            // Simulate sending parsed structured data to the backend asynchronously
+            const userId = localStorage.getItem("userId");
+            const localDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+            const isPublishNow = localDateTime.getTime() <= new Date().getTime();
+
             const payload = {
-                postId: selectedPost?._id,
-                platforms: selectedPlatforms,
-                scheduledFor: `${scheduleDate}T${scheduleTime}:00Z`
+                userId,
+                content: selectedPost?.content,
+                mediaUrls: selectedPost?.mediaUrl ? [selectedPost.mediaUrl] : [],
+                platforms: selectedPlatforms.map(p => ({ platform: p.platform, accountId: p._id || p.id })),
+                scheduledDate: `${scheduleDate}T${scheduleTime}:00`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                publishNow: isPublishNow
             };
-            console.log("Scheduling payload to backend:", payload);
 
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            const response = await fetch("http://127.0.0.1:3000/api/posts/schedule", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
 
-            alert('Post scheduled successfully!');
-            setSelectedPost(null);
-            setScheduleErrors([]);
+            if (response.ok) {
+                toast.success(isPublishNow ? 'Post published successfully!' : 'Post scheduled successfully!');
+                setSelectedPost(null);
+                setScheduleErrors([]);
+            } else {
+                const data = await response.json();
+                toast.error(data.message || 'Failed to schedule');
+            }
         } catch (error) {
             console.error("Failed to schedule:", error);
+            toast.error("Error connecting to server");
         } finally {
             setIsScheduling(false);
         }
     };
 
-    const togglePlatform = (id: string) => {
+    const togglePlatform = (acc: any) => {
+        const accId = acc._id || acc.id;
         setSelectedPlatforms(prev => {
-            const next = prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id];
+            const exists = prev.find(p => (p._id || p.id) === accId);
+            const next = exists ? prev.filter(p => (p._id || p.id) !== accId) : [...prev, acc];
             if (next.length > 0) setScheduleErrors(e => e.filter(err => err !== 'Channels'));
             return next;
         });
@@ -172,12 +228,12 @@ const AIComposer = () => {
                         <History className="w-5 h-5" />
                         <h2 className="text-xl font-medium">Recent Generations</h2>
                     </div>
-                    <span className="text-slate-500 font-medium text-sm">{dummyGenerationData.length} total</span>
+                    <span className="text-slate-500 font-medium text-sm">{generations.length} total</span>
                 </div>
 
-                {dummyGenerationData.length > 0 ? (
+                {generations.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {dummyGenerationData.map((post, index) => {
+                        {generations.map((post, index) => {
                             const isHighlighted = index === 0 || index === 2;
                             return (
                                 <div key={post._id} className={`bg-white rounded-[1.25rem] p-5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.04)] hover:shadow-md transition-all flex flex-col h-full border ${isHighlighted ? 'border-indigo-100' : 'border-gray-100'}`}>
@@ -254,17 +310,21 @@ const AIComposer = () => {
                                     <label className="text-[11px] font-bold text-slate-500 tracking-widest">SELECT CHANNELS</label>
                                     {scheduleErrors.includes('Channels') && <span className="text-[11px] text-red-500 font-semibold tracking-wider">* REQUIRED</span>}
                                 </div>
-                                <div className={`flex gap-3 p-1 -m-1 rounded-xl transition-colors ${scheduleErrors.includes('Channels') ? 'bg-red-50 ring-1 ring-red-300' : ''}`}>
-                                    {PLATFORMS.map(platform => {
-                                        const Icon = platform.icon;
-                                        const isSelected = selectedPlatforms.includes(platform.id);
+                                <div className={`flex gap-3 p-1 -m-1 rounded-xl transition-colors flex-wrap ${scheduleErrors.includes('Channels') ? 'bg-red-50 ring-1 ring-red-300' : ''}`}>
+                                    {connectedAccounts.length === 0 && <span className="text-sm text-slate-500 py-2">No connected accounts found.</span>}
+                                    {connectedAccounts.map(acc => {
+                                        const platformDef = PLATFORMS.find(p => p.id === acc.platform);
+                                        const Icon = platformDef?.icon || History;
+                                        const accId = acc._id || acc.id;
+                                        const isSelected = selectedPlatforms.some(p => (p._id || p.id) === accId);
                                         return (
                                             <button
-                                                key={platform.id}
-                                                onClick={() => togglePlatform(platform.id)}
-                                                className={`w-12 h-12 rounded-xl border transition-all duration-200 flex items-center justify-center
+                                                key={accId}
+                                                onClick={() => togglePlatform(acc)}
+                                                className={`w-12 h-12 rounded-xl border transition-all duration-200 flex items-center justify-center relative group
                                                     ${isSelected ? 'border-indigo-500 bg-indigo-50 text-indigo-600 shadow-sm' : 'border-gray-200 text-slate-400 hover:border-indigo-200'}
                                                     ${scheduleErrors.includes('Channels') && !isSelected ? 'border-red-200 text-red-400' : ''}`}
+                                                title={acc.name || acc.platform}
                                             >
                                                 <Icon className="w-5 h-5" />
                                             </button>
