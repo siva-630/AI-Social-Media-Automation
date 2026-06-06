@@ -20,7 +20,7 @@ const Accounts = () => {
         setAccounts(JSON.parse(cached));
       }
 
-      const response = await fetch(`http://127.0.0.1:3000/api/social/accounts?userId=${userId}`);
+      const response = await fetch(`https://ai-social-media-automation.onrender.com/api/social/accounts?userId=${userId}`);
       const data = await response.json();
       if (response.ok) {
         const mappedAccounts = (data.accounts || []).map((acc: any) => ({
@@ -57,7 +57,7 @@ const Accounts = () => {
 
   const handleDisconnect = async (accountId: string) => {
     try {
-      const response = await fetch(`http://127.0.0.1:3000/api/social/accounts/${accountId}`, {
+      const response = await fetch(`https://ai-social-media-automation.onrender.com/api/social/accounts/${accountId}`, {
         method: "DELETE"
       });
       if (response.ok) {
@@ -78,7 +78,7 @@ const Accounts = () => {
   const handleConnect = async (platformId: string) => {
     try {
       setConnecting(platformId);
-      const response = await fetch("http://127.0.0.1:3000/api/social/auth-url", {
+      const response = await fetch("https://ai-social-media-automation.onrender.com/api/social/auth-url", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

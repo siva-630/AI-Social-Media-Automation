@@ -32,14 +32,14 @@ const AIComposer = () => {
                 if (!userId) return;
                 
                 // Fetch generations
-                const res = await fetch(`http://127.0.0.1:3000/api/generations/user?userId=${userId}`);
+                const res = await fetch(`https://ai-social-media-automation.onrender.com/api/generations/user?userId=${userId}`);
                 if (res.ok) {
                     const data = await res.json();
                     setGenerations(data.generations || []);
                 }
 
                 // Fetch connected accounts
-                const accountsRes = await fetch(`http://127.0.0.1:3000/api/social/accounts?userId=${userId}`);
+                const accountsRes = await fetch(`https://ai-social-media-automation.onrender.com/api/social/accounts?userId=${userId}`);
                 if (accountsRes.ok) {
                     const accountsData = await accountsRes.json();
                     setConnectedAccounts(accountsData.accounts || []);
@@ -64,7 +64,7 @@ const AIComposer = () => {
         setIsGenerating(true);
         try {
             const userId = localStorage.getItem("userId");
-            const response = await fetch("http://127.0.0.1:3000/api/generations/generate", {
+            const response = await fetch("https://ai-social-media-automation.onrender.com/api/generations/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: idea, tone: selectedTone, generateImage: aiImage, userId })
@@ -125,7 +125,7 @@ const AIComposer = () => {
                 publishNow: isPublishNow
             };
 
-            const response = await fetch("http://127.0.0.1:3000/api/posts/schedule", {
+            const response = await fetch("https://ai-social-media-automation.onrender.com/api/posts/schedule", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)

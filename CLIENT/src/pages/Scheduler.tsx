@@ -28,7 +28,7 @@ const Scheduler = () => {
         const userId = localStorage.getItem("userId");
         if (!userId) return;
         try {
-            const res = await fetch(`http://127.0.0.1:3000/api/posts?userId=${userId}`);
+            const res = await fetch(`https://ai-social-media-automation.onrender.com/api/posts?userId=${userId}`);
             if (res.ok) {
                 const data = await res.json();
                 setPosts(data.posts || []);
@@ -45,7 +45,7 @@ const Scheduler = () => {
             
             try {
                 // Fetch connected accounts
-                const accountsRes = await fetch(`http://127.0.0.1:3000/api/social/accounts?userId=${userId}`);
+                const accountsRes = await fetch(`https://ai-social-media-automation.onrender.com/api/social/accounts?userId=${userId}`);
                 if (accountsRes.ok) {
                     const accountsData = await accountsRes.json();
                     setConnectedAccounts(accountsData.accounts || []);
@@ -85,7 +85,7 @@ const Scheduler = () => {
 
     const handleDelete = async (postId: string) => {
         try {
-            const res = await fetch(`http://127.0.0.1:3000/api/posts/${postId}`, {
+            const res = await fetch(`https://ai-social-media-automation.onrender.com/api/posts/${postId}`, {
                 method: "DELETE"
             });
             if (res.ok) {
@@ -170,7 +170,7 @@ const Scheduler = () => {
                     publishNow: isPublishNow
                 };
 
-                const res = await fetch("http://127.0.0.1:3000/api/posts/schedule", {
+                const res = await fetch("https://ai-social-media-automation.onrender.com/api/posts/schedule", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)

@@ -12,7 +12,7 @@ const Dashboard = () => {
         const userId = localStorage.getItem("userId");
         if (!userId) return;
 
-        const response = await fetch(`http://127.0.0.1:3000/api/dashboard?userId=${userId}`);
+        const response = await fetch(`https://ai-social-media-automation.onrender.com/api/dashboard?userId=${userId}`);
         const data = await response.json();
 
         if (response.ok) {

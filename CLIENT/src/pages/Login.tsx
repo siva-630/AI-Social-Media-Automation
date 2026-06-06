@@ -26,7 +26,7 @@ export default function Login() {
             const endpoint = loginState ? "/api/auth/login" : "/api/auth/register";
             const payload = loginState ? { email, password } : { name, email, password };
 
-            const response = await fetch(`http://127.0.0.1:3000${endpoint}`, {
+            const response = await fetch(`https://ai-social-media-automation.onrender.com${endpoint}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
