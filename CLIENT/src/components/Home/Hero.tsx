@@ -29,9 +29,15 @@ export default function Hero() {
 
                 {/* CTAs */}
                 <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <Link to="/login" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
-                        Start for free <ArrowRightIcon className="size-4" />
-                    </Link>
+                    {localStorage.getItem("token") ? (
+                        <Link to="/dashboard" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
+                            Go to Dashboard <ArrowRightIcon className="size-4" />
+                        </Link>
+                    ) : (
+                        <Link to="/login" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
+                            Start for free <ArrowRightIcon className="size-4" />
+                        </Link>
+                    )}
                     <a href="#how-it-works" className="bg-transparent text-[#333] border-[1.5px] border-black/10 rounded-full font-medium hover:bg-black/5 hover:border-black/20 inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto backdrop-blur justify-center transition-all">
                         See how it works
                     </a>
@@ -72,7 +78,7 @@ export default function Hero() {
                         <div className="rounded-xl p-4 space-y-3 bg-white" style={{ border: "1px solid rgba(0,0,0,0.06)" }}>
                             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Recent Activity</div>
                             {[
-                                { text: "Post published to LinkedIn & Twitter", time: "2m ago" },
+                                { text: "Post published to LinkedIn & Facebook", time: "2m ago" },
                                 { text: "AI replied to 3 comments", time: "15m ago" },
                                 { text: "New post scheduled for tomorrow 9am", time: "1h ago" },
                             ].map((item) => (

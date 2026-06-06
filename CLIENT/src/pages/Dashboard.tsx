@@ -1,33 +1,37 @@
 import { ActivityIcon, CheckCircleIcon, ClockIcon, SendIcon, Share2Icon, TrendingUpIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-
-import { dummyPostsData,dummyAccountsData,dummyActivityData, } from "../assets/assets";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ scheduled: 0, published: 0, connectedAccounts: 0 })
-  const [activities, setActivities] = useState<any[]>([48675])
+  const [activities, setActivities] = useState<any[]>([])
   
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) return;
 
-        const [postRes, accountres, acitivityres] = [{ data: dummyPostsData }, { data: dummyAccountsData }, { data: dummyActivityData }]
-        const posts = postRes.data;
-        setStats({
-          scheduled: posts.filter((p: any) => p.status === 'scheduled').length,
-          published: posts.filter((p: any) => p.status === 'published').length,
-          connectedAccounts:accountres.data.filter((a:any) => a.status === 'connected') .length
-          
-        })
-        setActivities(acitivityres.data)
-        
+        const response = await fetch(`http://127.0.0.1:3000/api/dashboard?userId=${userId}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setStats({
+            scheduled: data.stats.scheduled || 0,
+            published: data.stats.published || 0,
+            connectedAccounts: data.stats.connectedAccounts || 0
+          });
+          setActivities(data.activities || []);
+        } else {
+          toast.error("Failed to load dashboard data");
+        }
       } catch (error: any) {
-        console.error("error for fetchDashboardData data",error)
-        
+        console.error("error for fetchDashboardData data", error);
+        toast.error("Error connecting to server");
       }
     }
     fetchDashboardData();
-  },[])
+  }, [])
   const statCards = [
     {
       label: "Scheduled Posts",

@@ -26,9 +26,15 @@ export default function CTA() {
                         <p className="mt-6 text-gray-500 max-w-lg mx-auto  text-lg">Join thousands of creators and marketers who trust SocialFlow AI to grow their audience with intelligent automation.</p>
 
                         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-                            <Link to="/login" className="bg-violet-500 text-white rounded-full font-semibold hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(139,92,246,0.35)] inline-flex items-center gap-2 text-[15px] px-10 py-4 w-full sm:w-auto justify-center">
-                                Get Started Free <ArrowRightIcon className="size-4" />
-                            </Link>
+                            {localStorage.getItem("token") ? (
+                                <Link to="/dashboard" className="bg-violet-500 text-white rounded-full font-semibold hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(139,92,246,0.35)] inline-flex items-center gap-2 text-[15px] px-10 py-4 w-full sm:w-auto justify-center">
+                                    Go to Dashboard <ArrowRightIcon className="size-4" />
+                                </Link>
+                            ) : (
+                                <Link to="/login" className="bg-violet-500 text-white rounded-full font-semibold hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(139,92,246,0.35)] inline-flex items-center gap-2 text-[15px] px-10 py-4 w-full sm:w-auto justify-center">
+                                    Get Started Free <ArrowRightIcon className="size-4" />
+                                </Link>
+                            )}
                             <a href="#pricing" className="bg-transparent text-[#333] border-[1.5px] border-black/10 rounded-full font-medium hover:bg-black/5 hover:border-black/20 inline-flex items-center gap-2 text-[15px] px-10 py-4 w-full sm:w-auto justify-center">
                                 View Pricing
                             </a>

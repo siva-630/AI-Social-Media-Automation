@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MailIcon, LockIcon, ArrowRightIcon, User2Icon } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function Login() {
     const [loginState, setLoginState] = useState(true);
@@ -10,13 +11,49 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // Redirect to dashboard if already logged in
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            navigate("/dashboard");
+        }
+    }, [navigate]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => {
+
+        try {
+            const endpoint = loginState ? "/api/auth/login" : "/api/auth/register";
+            const payload = loginState ? { email, password } : { name, email, password };
+
+            const response = await fetch(`http://127.0.0.1:3000${endpoint}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Save user data securely (e.g., in localStorage or context)
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("userId", data._id);
+                localStorage.setItem("userName", data.name);
+                localStorage.setItem("userEmail", data.email);
+                
+                toast.success(loginState ? "Logged in successfully!" : "Account created successfully!");
+                navigate("/dashboard");
+            } else {
+                toast.error(data.message || "Authentication failed");
+            }
+        } catch (error) {
+            console.error("Auth error:", error);
+            toast.error("An error occurred during authentication. Please try again.");
+        } finally {
             setLoading(false);
-            navigate("/dashboard");
-        }, 1000);
+        }
     };
 
     return (

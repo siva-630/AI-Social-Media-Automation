@@ -23,7 +23,7 @@ const features = [
     {
         icon: Share2Icon,
         title: "Multi-Platform",
-        description: "Connect Twitter, LinkedIn, Facebook, and Instagram. Post everywhere from one unified workspace.",
+        description: "Connect LinkedIn, Facebook, and Instagram. Post everywhere from one unified workspace.",
         color: "bg-violet-50 text-violet-500",
     },
     {

@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
@@ -11,6 +13,7 @@ import AIComposer from "./pages/AIComposer";
 export default function App() {
     return (
         <>
+            <ToastContainer position="top-right" />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
@@ -19,7 +22,7 @@ export default function App() {
                     <Route path="/accounts" element={<Accounts />} />
                     <Route path="/schedule" element={<Scheduler />} />
                     <Route path="/ai-composer" element={<AIComposer/>}/>
-            </Route>
+                </Route>
             </Routes>
         </>
     );
