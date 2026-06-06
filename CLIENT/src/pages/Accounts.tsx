@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState<any[]>([])
-  const [connecting, setConnecting] = useState<string | null>(null)
+  const [, setConnecting] = useState<string | null>(null)
   const [showPlatformPicker, setShowPlatformPicker] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   const fetchAccounts = async () => {
     try {

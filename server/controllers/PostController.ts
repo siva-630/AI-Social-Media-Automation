@@ -83,10 +83,10 @@ export const schedulePost = async (
     // Process base64 media if provided
     let finalMediaUrls = mediaUrls || [];
     if (mediaBase64) {
-      cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-        api_key: process.env.CLOUDINARY_API_KEY, 
-        api_secret: process.env.CLOUDINARY_API_SECRET 
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
       });
       try {
         const uploadResult = await cloudinary.uploader.upload(mediaBase64, { folder: "social_scheduler" });
@@ -98,7 +98,7 @@ export const schedulePost = async (
       }
     }
 
-    // Create the post in the database
+
     const newPost = await Post.create({
       user: userId,
       content,
@@ -121,9 +121,9 @@ export const schedulePost = async (
             scheduledFor: publishNow ? undefined : scheduledDate,
             timezone: publishNow ? undefined : timezone,
             publishNow: publishNow ? true : undefined,
-            mediaItems: (finalMediaUrls && finalMediaUrls.length > 0) 
-                ? finalMediaUrls.map((url: string) => ({ type: "image", url })) 
-                : undefined,
+            mediaItems: (finalMediaUrls && finalMediaUrls.length > 0)
+              ? finalMediaUrls.map((url: string) => ({ type: "image", url }))
+              : undefined,
           }
         });
       } catch (err: any) {
