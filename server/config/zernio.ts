@@ -3,8 +3,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+if (!process.env.ZERNIO_API_KEY) {
+  throw new Error("ZERNIO_API_KEY environment variable is required");
+}
+
 const zernio = new Zernio({
-  apiKey: 'sk_a8187f23c9be7fc36d425c3447284dba8470d048ef56f1a7ede0462178c9fc0d',
+  apiKey: process.env.ZERNIO_API_KEY,
 });
 
 export default zernio;

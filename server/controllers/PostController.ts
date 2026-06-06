@@ -69,7 +69,7 @@ export const schedulePost = async (
   try {
     const { userId, content, platforms, scheduledDate, mediaUrls, mediaBase64, timezone, publishNow } = req.body;
 
-    if (!userId || !content || !platforms || !scheduledDate) {
+    if (!userId || !content || !platforms || (!publishNow && !scheduledDate)) {
       res.status(400);
       throw new Error("Please provide all required fields");
     }
@@ -139,7 +139,7 @@ export const schedulePost = async (
     await Activity.create({
       user: userId,
       type: "post_scheduled",
-      description: `Scheduled a post for ${platforms.join(", ")}`,
+      description: `Scheduled a post for ${newPost.platforms.join(", ")}`,
       relatedId: newPost._id,
     });
 

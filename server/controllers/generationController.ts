@@ -60,7 +60,7 @@ export const generatePostContent = async (req: Request, res: Response) => {
                 mediaUrl = uploadResult.secure_url;
             } catch (err: any) {
                 console.error("Image generation or upload failed", err);
-                return res.status(400).json({ message: `Image generation error: ${err.message || 'Hugging Face / Cloudinary error'}` });
+                return res.status(400).json({ message: "Image generation failed" });
             }
         }
 
@@ -82,7 +82,7 @@ export const generatePostContent = async (req: Request, res: Response) => {
         });
     } catch (error: any) {
         console.error("Error generating content:", error);
-        res.status(500).json({ message: "Server error during generation", error: error.message });
+        res.status(500).json({ message: "Server error during generation" });
     }
 };
 
@@ -98,6 +98,6 @@ export const getGenerations = async (req: Request, res: Response) => {
         res.status(200).json({ generations });
     } catch (error: any) {
         console.error("Error fetching generations:", error);
-        res.status(500).json({ message: "Server error while fetching generations", error: error.message });
+        res.status(500).json({ message: "Server error while fetching generations" });
     }
 };

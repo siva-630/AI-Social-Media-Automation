@@ -94,7 +94,7 @@ export default function Login() {
 
                         <button type="submit" disabled={loading} className="w-full py-2.5 px-4 bg-linear-to-r from-violet-600 to-violet-500 text-white rounded-full text-sm transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                             {loading ? (
-                                "Signing in..."
+                                loginState ? "Signing in..." : "Signing up..."
                             ) : (
                                 <>
                                     {loginState ? "Sign In" : "Sign Up"} <ArrowRightIcon className="size-4" />
