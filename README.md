@@ -45,54 +45,6 @@ Built with modern software architecture, performance, and security in mind, it p
 4. **Secure Architecture**: JWT-based authentication combined with secure environment variable management ensures all user data, credentials, and OAuth access tokens remain strictly protected.
 5. **Premium UI/UX Design**: Designed with a vibrant, professional aesthetic focusing on smooth micro-animations, comprehensive form validation, error states, and a fully responsive grid system.
 
-## ⚙️ Local Development Setup
-
-### Prerequisites
-- Node.js (v18+ recommended)
-- MongoDB instance (Local or Atlas cluster)
-- Cloudinary Account
-- Zernio API Key
-- Google Gemini & Hugging Face API Keys
-
-### Installation & Execution
-
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd AI-SOCIAL-MEDIA
-   ```
-
-2. **Setup Backend Environment Variables:**
-   Create a `.env` file in the `server` directory and configure the following:
-   ```env
-   PORT=5000
-   MONGODB_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   ZERNIO_API_KEY=your_zernio_key
-   GEMINI_API_KEY=your_gemini_key
-   HUGGINGFACE_API_KEY=your_huggingface_key
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   ```
-
-3. **Install Dependencies & Run Backend:**
-   ```bash
-   cd server
-   npm install
-   npm run dev
-   ```
-
-4. **Install Dependencies & Run Frontend:**
-   Open a new terminal window:
-   ```bash
-   cd CLIENT
-   npm install
-   npm run dev
-   ```
-
-5. **Access the Application:**
-   Open your browser and navigate to `http://localhost:5173`.
 
 ## 📦 Production Deployment
 The application is structured and configured for modern continuous deployment workflows:
