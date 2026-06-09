@@ -13,7 +13,7 @@ const Scheduler = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    
+
     // Validation states
     const [errors, setErrors] = useState({
         platforms: false,
@@ -21,11 +21,11 @@ const Scheduler = () => {
         date: false,
         time: false
     });
-    
+
     // Image upload state
     const [mediaPreview, setMediaPreview] = useState<{ url: string; type: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    
+
     const fetchPosts = async () => {
         const userId = localStorage.getItem("userId");
         if (!userId) return;
@@ -44,7 +44,7 @@ const Scheduler = () => {
         const fetchData = async () => {
             const userId = localStorage.getItem("userId");
             if (!userId) return;
-            
+
             try {
                 // Fetch connected accounts
                 const accountsRes = await fetch(`${API_URL}/api/social/accounts?userId=${userId}`);
@@ -60,7 +60,7 @@ const Scheduler = () => {
         fetchData();
     }, []);
 
-    const sortedPosts = [...posts].sort((a, b) => 
+    const sortedPosts = [...posts].sort((a, b) =>
         new Date(b.scheduledDate || b.createdAt).getTime() - new Date(a.scheduledDate || a.createdAt).getTime()
     );
 
@@ -69,7 +69,7 @@ const Scheduler = () => {
         const postTime = new Date(post.scheduledDate || post.createdAt).getTime();
         return post.status === 'scheduled' && postTime > now;
     });
-    
+
     const publishedPosts = sortedPosts.filter((post: any) => {
         const postTime = new Date(post.scheduledDate || post.createdAt).getTime();
         return post.status === 'published' || (post.status === 'scheduled' && postTime <= now);
@@ -139,14 +139,14 @@ const Scheduler = () => {
             date: date === '',
             time: time === ''
         };
-        
+
         setErrors(newErrors);
 
         if (!Object.values(newErrors).some(Boolean)) {
             setIsLoading(true);
             try {
                 const userId = localStorage.getItem("userId");
-                
+
                 // Read base64 if media exists
                 let mediaBase64 = null;
                 if (fileInputRef.current && fileInputRef.current.files && fileInputRef.current.files[0]) {
@@ -161,7 +161,7 @@ const Scheduler = () => {
                 const localDateTime = new Date(`${date}T${time}`);
                 // Publish instantly only if the selected time is strictly in the past or exactly now
                 const isPublishNow = localDateTime.getTime() <= new Date().getTime();
-                
+
                 const payload = {
                     userId,
                     content,
@@ -206,153 +206,153 @@ const Scheduler = () => {
             <div className="lg:col-span-5 xl:col-span-4">
                 <div className="bg-white rounded-[1.25rem] border border-gray-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] p-5 md:p-6 flex flex-col gap-5">
                     <h1 className="text-[1.2rem] font-bold text-gray-800">Compose Post</h1>
-                
-                {/* Platforms */}
-                <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center">
-                        <label className="text-xs font-bold text-gray-400 tracking-wider">PLATFORMS</label>
-                        {errors.platforms && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Required</span>}
-                    </div>
-                    <div className={`flex flex-wrap gap-2.5 p-1 -m-1 rounded-xl transition-all ${errors.platforms ? 'bg-red-50 ring-1 ring-red-300' : ''}`}>
-                        {connectedAccounts.length === 0 && <span className="text-sm text-gray-500 py-1">No connected accounts. Please connect an account in the dashboard.</span>}
-                        {connectedAccounts.map(acc => {
-                            const platformDef = PLATFORMS.find(p => p.id === acc.platform);
-                            const Icon = platformDef?.icon || Calendar;
-                            const accId = acc._id || acc.id;
-                            const isSelected = selectedPlatforms.some(p => (p._id || p.id) === accId);
-                            return (
-                                <button
-                                    key={accId}
-                                    onClick={() => togglePlatform(acc)}
-                                    title={acc.name || acc.platform}
-                                    className={`w-10 h-10 rounded-xl border transition-all duration-200 flex items-center justify-center relative group
+
+                    {/* Platforms */}
+                    <div className="flex flex-col gap-2">
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-bold text-gray-400 tracking-wider">PLATFORMS</label>
+                            {errors.platforms && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Required</span>}
+                        </div>
+                        <div className={`flex flex-wrap gap-2.5 p-1 -m-1 rounded-xl transition-all ${errors.platforms ? 'bg-red-50 ring-1 ring-red-300' : ''}`}>
+                            {connectedAccounts.length === 0 && <span className="text-sm text-gray-500 py-1">No connected accounts. Please connect an account in the dashboard.</span>}
+                            {connectedAccounts.map(acc => {
+                                const platformDef = PLATFORMS.find(p => p.id === acc.platform);
+                                const Icon = platformDef?.icon || Calendar;
+                                const accId = acc._id || acc.id;
+                                const isSelected = selectedPlatforms.some(p => (p._id || p.id) === accId);
+                                return (
+                                    <button
+                                        key={accId}
+                                        onClick={() => togglePlatform(acc)}
+                                        title={acc.name || acc.platform}
+                                        className={`w-10 h-10 rounded-xl border transition-all duration-200 flex items-center justify-center relative group
                                         ${isSelected ? 'border-indigo-500 bg-indigo-50 text-indigo-600 shadow-sm' : 'border-gray-200 text-gray-500 bg-white hover:bg-gray-50 hover:border-gray-300'}
                                         ${errors.platforms && !isSelected ? 'border-red-200 text-red-400' : ''}`}
-                                >
-                                    <Icon className="w-4 h-4" />
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center">
-                        <label className="text-xs font-bold text-gray-400 tracking-wider">CONTENT</label>
-                        {errors.content && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Required</span>}
-                    </div>
-                    <div className={`relative border rounded-2xl transition-all duration-200 
-                        ${errors.content 
-                            ? 'border-red-300 bg-red-50 focus-within:ring-1 focus-within:ring-red-500 focus-within:border-red-500' 
-                            : 'border-gray-200 bg-[#fafbfc] focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500'}`}>
-                        <textarea
-                            value={content}
-                            onChange={(e) => { setContent(e.target.value); setErrors(err => ({ ...err, content: false })); }}
-                            placeholder="What do you want to share today?"
-                            maxLength={280}
-                            className={`w-full h-24 p-3 bg-transparent resize-none outline-none text-sm transition-colors duration-200
-                                ${errors.content ? 'text-red-900 placeholder-red-300' : 'text-gray-700 placeholder-gray-400'}`}
-                        />
-                        <div className={`absolute bottom-2 right-3 text-xs font-medium ${errors.content ? 'text-red-400' : 'text-gray-400'}`}>
-                            {content.length}/280
+                                    >
+                                        <Icon className="w-4 h-4" />
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
-                </div>
 
-                {/* Media */}
-                <div className="flex flex-col gap-2">
-                    <label className="text-xs font-bold text-gray-400 tracking-wider">MEDIA (OPTIONAL)</label>
-                    <input 
-                        type="file" 
-                        ref={fileInputRef} 
-                        onChange={handleFileChange} 
-                        accept="image/*,video/*"
-                        className="hidden" 
-                    />
-                    {mediaPreview ? (
-                        <div className="relative w-full h-20 rounded-2xl border border-gray-200 overflow-hidden group">
-                            {mediaPreview.type.startsWith('video/') ? (
-                                <video src={mediaPreview.url} className="w-full h-full object-cover" controls />
-                            ) : (
-                                <img src={mediaPreview.url} alt="Preview" className="w-full h-full object-cover" />
-                            )}
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                                <button 
-                                    onClick={handleRemoveMedia}
-                                    className="bg-white p-2 rounded-full hover:bg-red-50 hover:text-red-600 text-gray-800 transition-colors shadow-sm"
-                                    title="Remove image"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
+                    {/* Content */}
+                    <div className="flex flex-col gap-2">
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-bold text-gray-400 tracking-wider">CONTENT</label>
+                            {errors.content && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Required</span>}
+                        </div>
+                        <div className={`relative border rounded-2xl transition-all duration-200 
+                        ${errors.content
+                                ? 'border-red-300 bg-red-50 focus-within:ring-1 focus-within:ring-red-500 focus-within:border-red-500'
+                                : 'border-gray-200 bg-[#fafbfc] focus-within:ring-1 focus-within:ring-indigo-500 focus-within:border-indigo-500'}`}>
+                            <textarea
+                                value={content}
+                                onChange={(e) => { setContent(e.target.value); setErrors(err => ({ ...err, content: false })); }}
+                                placeholder="What do you want to share today?"
+                                maxLength={280}
+                                className={`w-full h-24 p-3 bg-transparent resize-none outline-none text-sm transition-colors duration-200
+                                ${errors.content ? 'text-red-900 placeholder-red-300' : 'text-gray-700 placeholder-gray-400'}`}
+                            />
+                            <div className={`absolute bottom-2 right-3 text-xs font-medium ${errors.content ? 'text-red-400' : 'text-gray-400'}`}>
+                                {content.length}/280
                             </div>
                         </div>
-                    ) : (
-                        <div 
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full h-20 rounded-2xl border-2 border-dashed border-gray-200 bg-[#fafbfc] flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-gray-50 hover:border-indigo-300 transition-all duration-200"
-                        >
-                            <ImageIcon className="w-5 h-5 text-gray-400" />
-                            <span className="text-sm font-medium text-gray-400">Click to upload image or video</span>
-                        </div>
-                    )}
-                </div>
+                    </div>
 
-                {/* Date & Time */}
-                <div className="flex gap-4">
-                    <div className="flex-1 flex flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                            <label className="text-xs font-bold text-gray-400 tracking-wider">DATE</label>
-                            {errors.date && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Required</span>}
+                    {/* Media */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-xs font-bold text-gray-400 tracking-wider">MEDIA (OPTIONAL)</label>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/*,video/*"
+                            className="hidden"
+                        />
+                        {mediaPreview ? (
+                            <div className="relative w-full h-20 rounded-2xl border border-gray-200 overflow-hidden group">
+                                {mediaPreview.type.startsWith('video/') ? (
+                                    <video src={mediaPreview.url} className="w-full h-full object-cover" controls />
+                                ) : (
+                                    <img src={mediaPreview.url} alt="Preview" className="w-full h-full object-cover" />
+                                )}
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                                    <button
+                                        onClick={handleRemoveMedia}
+                                        className="bg-white p-2 rounded-full hover:bg-red-50 hover:text-red-600 text-gray-800 transition-colors shadow-sm"
+                                        title="Remove image"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                onClick={() => fileInputRef.current?.click()}
+                                className="w-full h-20 rounded-2xl border-2 border-dashed border-gray-200 bg-[#fafbfc] flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-gray-50 hover:border-indigo-300 transition-all duration-200"
+                            >
+                                <ImageIcon className="w-5 h-5 text-gray-400" />
+                                <span className="text-sm font-medium text-gray-400">Click to upload image or video</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Date & Time */}
+                    <div className="flex gap-4">
+                        <div className="flex-1 flex flex-col gap-2">
+                            <div className="flex justify-between items-center">
+                                <label className="text-xs font-bold text-gray-400 tracking-wider">DATE</label>
+                                {errors.date && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Required</span>}
+                            </div>
+                            <div className="relative">
+                                <Calendar className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${errors.date ? 'text-red-400' : 'text-gray-400'}`} />
+                                <input
+                                    type="date"
+                                    value={date}
+                                    onChange={(e) => { setDate(e.target.value); setErrors(err => ({ ...err, date: false })); }}
+                                    className={`w-full pl-9 pr-2 py-2.5 rounded-xl border outline-none text-sm transition-all duration-200 
+                                    ${errors.date
+                                            ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500 focus:border-red-500'
+                                            : 'border-gray-200 bg-[#fafbfc] text-gray-600 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                                />
+                            </div>
                         </div>
-                        <div className="relative">
-                            <Calendar className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${errors.date ? 'text-red-400' : 'text-gray-400'}`} />
-                            <input 
-                                type="date"
-                                value={date}
-                                onChange={(e) => { setDate(e.target.value); setErrors(err => ({ ...err, date: false })); }}
-                                className={`w-full pl-9 pr-2 py-2.5 rounded-xl border outline-none text-sm transition-all duration-200 
-                                    ${errors.date 
-                                        ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500 focus:border-red-500' 
-                                        : 'border-gray-200 bg-[#fafbfc] text-gray-600 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'}`}
-                            />
+                        <div className="flex-1 flex flex-col gap-2">
+                            <div className="flex justify-between items-center">
+                                <label className="text-xs font-bold text-gray-400 tracking-wider">TIME</label>
+                                {errors.time && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> Required</span>}
+                            </div>
+                            <div className="relative">
+                                <Clock className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${errors.time ? 'text-red-400' : 'text-gray-400'}`} />
+                                <input
+                                    type="time"
+                                    value={time}
+                                    onChange={(e) => { setTime(e.target.value); setErrors(err => ({ ...err, time: false })); }}
+                                    className={`w-full pl-9 pr-2 py-2.5 rounded-xl border outline-none text-sm transition-all duration-200 
+                                    ${errors.time
+                                            ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500 focus:border-red-500'
+                                            : 'border-gray-200 bg-[#fafbfc] text-gray-600 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'}`}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className="flex-1 flex flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                            <label className="text-xs font-bold text-gray-400 tracking-wider">TIME</label>
-                            {errors.time && <span className="text-xs text-red-500 font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3"/> Required</span>}
-                        </div>
-                        <div className="relative">
-                            <Clock className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${errors.time ? 'text-red-400' : 'text-gray-400'}`} />
-                            <input 
-                                type="time"
-                                value={time}
-                                onChange={(e) => { setTime(e.target.value); setErrors(err => ({ ...err, time: false })); }}
-                                className={`w-full pl-9 pr-2 py-2.5 rounded-xl border outline-none text-sm transition-all duration-200 
-                                    ${errors.time 
-                                        ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500 focus:border-red-500' 
-                                        : 'border-gray-200 bg-[#fafbfc] text-gray-600 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'}`}
-                            />
-                        </div>
-                    </div>
-                </div>
 
-                {/* Button */}
-                <button 
-                    onClick={handleSchedule}
-                    disabled={isLoading}
-                    className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-sm shadow-indigo-200 disabled:opacity-70"
-                >
-                    {isLoading ? 'Scheduling...' : 'Schedule Post'}
-                    {!isLoading && <ArrowRight className="w-4 h-4" />}
-                </button>
+                    {/* Button */}
+                    <button
+                        onClick={handleSchedule}
+                        disabled={isLoading}
+                        className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-sm shadow-indigo-200 disabled:opacity-70"
+                    >
+                        {isLoading ? 'Scheduling...' : 'Schedule Post'}
+                        {!isLoading && <ArrowRight className="w-4 h-4" />}
+                    </button>
                 </div>
             </div>
 
             {/* Right Column: Posts List */}
             <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-5">
-                
+
                 {/* Upcoming Section */}
                 <div className="bg-white rounded-[1.25rem] border border-gray-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
                     <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
@@ -378,7 +378,7 @@ const Scheduler = () => {
                                                 <span className="bg-gray-100/80 text-gray-600 px-2.5 py-1 rounded-md">Image</span>
                                             )}
                                             <span>{formatDate(post.scheduledDate || post.scheduledFor)}</span>
-                                            <button 
+                                            <button
                                                 onClick={() => handleDelete(post._id)}
                                                 className="ml-1 p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded transition-colors"
                                                 title="Remove Post"
@@ -425,7 +425,7 @@ const Scheduler = () => {
                                                 <span className="bg-[#e6fcf5] text-[#20c997] px-2 py-0.5 rounded-full font-semibold border border-[#b2f2bb]/40">
                                                     Published
                                                 </span>
-                                                <button 
+                                                <button
                                                     onClick={() => handleDelete(post._id)}
                                                     className="ml-1 p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded transition-colors"
                                                     title="Remove Post"
