@@ -1,7 +1,8 @@
 # 🌟 AI Social Media Scheduler & Automation Tool
 
 > A powerful, AI-driven social media management platform that helps you create, schedule, and publish content seamlessly across multiple social networks.
-
+## Live Demo
+[AI Social Media Automation](https://ai-social-media-automation-git-main-siva-630s-projects.vercel.app/)
 ## 📸 Screenshots
 
 | Dashboard | AI Content Composer |
