@@ -79,7 +79,7 @@ export const Sidebar = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (va
         </div>
         <button onClick={logout} className="mt-1 flex items-center gap-2 px-3 py-2 w-full rounded text-sm text-slate-500 hover:bg-gray-100 transition-all duration-150">
           <LogOutIcon className="size-4 " />
-          Sing Out
+          Sign Out
         </button >
 
       </div>

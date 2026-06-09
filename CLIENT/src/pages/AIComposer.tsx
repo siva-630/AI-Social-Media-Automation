@@ -120,7 +120,8 @@ const AIComposer = () => {
                 content: selectedPost?.content,
                 mediaUrls: selectedPost?.mediaUrl ? [selectedPost.mediaUrl] : [],
                 platforms: selectedPlatforms.map(p => ({ platform: p.platform, accountId: p._id || p.id })),
-                scheduledDate: `${scheduleDate}T${scheduleTime}:00`,
+                scheduledDate: localDateTime.toISOString(),
+                localScheduleString: `${scheduleDate}T${scheduleTime}:00`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 publishNow: isPublishNow
             };

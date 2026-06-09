@@ -164,7 +164,8 @@ const Scheduler = () => {
                     userId,
                     content,
                     platforms: selectedPlatforms.map(p => ({ platform: p.platform, accountId: p._id || p.id })),
-                    scheduledDate: `${date}T${time}:00`,
+                    scheduledDate: localDateTime.toISOString(),
+                    localScheduleString: `${date}T${time}:00`,
                     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                     mediaBase64,
                     publishNow: isPublishNow

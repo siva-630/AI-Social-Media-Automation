@@ -67,7 +67,7 @@ export const schedulePost = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { userId, content, platforms, scheduledDate, mediaUrls, mediaBase64, timezone, publishNow } = req.body;
+    const { userId, content, platforms, scheduledDate, localScheduleString, mediaUrls, mediaBase64, timezone, publishNow } = req.body;
 
     if (!userId || !content || !platforms || (!publishNow && !scheduledDate)) {
       res.status(400);
@@ -118,7 +118,7 @@ export const schedulePost = async (
               platform: p.platform,
               accountId: p.accountId
             })),
-            scheduledFor: publishNow ? undefined : scheduledDate,
+            scheduledFor: publishNow ? undefined : (localScheduleString || scheduledDate),
             timezone: publishNow ? undefined : timezone,
             publishNow: publishNow ? true : undefined,
             mediaItems: (finalMediaUrls && finalMediaUrls.length > 0) 
