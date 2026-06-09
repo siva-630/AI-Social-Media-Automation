@@ -4,6 +4,7 @@ import { PLATFORMS } from '../assets/assets';
 import { toast } from 'react-toastify';
 
 const TONES = ['Professional', 'Creative', 'Funny', 'Minimalist', 'Excited'];
+const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "https://ai-social-media-automation.onrender.com";
 
 interface GenerationPost {
     _id: string;
@@ -30,16 +31,16 @@ const AIComposer = () => {
             try {
                 const userId = localStorage.getItem("userId");
                 if (!userId) return;
-                
+
                 // Fetch generations
-                const res = await fetch(`https://ai-social-media-automation.onrender.com/api/generations/user?userId=${userId}`);
+                const res = await fetch(`${API_URL}/api/generations/user?userId=${userId}`);
                 if (res.ok) {
                     const data = await res.json();
                     setGenerations(data.generations || []);
                 }
 
                 // Fetch connected accounts
-                const accountsRes = await fetch(`https://ai-social-media-automation.onrender.com/api/social/accounts?userId=${userId}`);
+                const accountsRes = await fetch(`${API_URL}/api/social/accounts?userId=${userId}`);
                 if (accountsRes.ok) {
                     const accountsData = await accountsRes.json();
                     setConnectedAccounts(accountsData.accounts || []);
@@ -64,7 +65,7 @@ const AIComposer = () => {
         setIsGenerating(true);
         try {
             const userId = localStorage.getItem("userId");
-            const response = await fetch("https://ai-social-media-automation.onrender.com/api/generations/generate", {
+            const response = await fetch(`${API_URL}/api/generations/generate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: idea, tone: selectedTone, generateImage: aiImage, userId })
@@ -126,7 +127,7 @@ const AIComposer = () => {
                 publishNow: isPublishNow
             };
 
-            const response = await fetch("https://ai-social-media-automation.onrender.com/api/posts/schedule", {
+            const response = await fetch(`${API_URL}/api/posts/schedule`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -177,7 +178,7 @@ const AIComposer = () => {
                     {/* AI Image Toggle */}
                     <div className="flex items-center gap-3 bg-indigo-50/80 px-4 py-2 rounded-[0.8rem]">
                         <span className="text-[13px] font-semibold text-slate-800">AI Image</span>
-                        <button 
+                        <button
                             onClick={() => setAiImage(!aiImage)}
                             className={`w-10 h-[22px] rounded-full transition-colors relative shadow-inner ${aiImage ? 'bg-indigo-500' : 'bg-gray-300'}`}
                         >
@@ -185,7 +186,7 @@ const AIComposer = () => {
                         </button>
                     </div>
 
-                    <button 
+                    <button
                         onClick={handleGenerate}
                         disabled={isGenerating || !idea.trim()}
                         className={`bg-indigo-600 text-white px-6 py-2.5 rounded-[0.8rem] font-medium flex items-center gap-2 transition-all shadow-sm shadow-indigo-200
@@ -213,8 +214,8 @@ const AIComposer = () => {
                         key={tone}
                         onClick={() => setSelectedTone(tone)}
                         className={`px-5 py-2 rounded-full text-sm font-medium transition-colors border
-                            ${selectedTone === tone 
-                                ? 'bg-indigo-500 text-white border-indigo-500 shadow-sm shadow-indigo-200' 
+                            ${selectedTone === tone
+                                ? 'bg-indigo-500 text-white border-indigo-500 shadow-sm shadow-indigo-200'
                                 : 'bg-white text-slate-500 border-gray-200 hover:bg-gray-50 hover:text-indigo-600'}`}
                     >
                         {tone}
@@ -238,33 +239,33 @@ const AIComposer = () => {
                             const isHighlighted = index === 0 || index === 2;
                             return (
                                 <div key={post._id} className={`bg-white rounded-[1.25rem] p-5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.04)] hover:shadow-md transition-all flex flex-col h-full border ${isHighlighted ? 'border-indigo-100' : 'border-gray-100'}`}>
-                                <div className="flex justify-between items-center mb-4">
-                                    <span className="text-[13px] text-slate-400 font-medium">{formatDate(post.createdAt)}</span>
-                                    <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50/80 px-2.5 py-1 rounded-md">
-                                        {post.tone}
-                                    </span>
-                                </div>
-                                
-                                <p className={`text-slate-700 text-[14px] leading-[1.6] mb-4 ${post.mediaUrl ? 'line-clamp-3' : 'line-clamp-6'}`}>
-                                    {post.content}
-                                </p>
-
-                                {post.mediaUrl && (
-                                    <div className="rounded-xl overflow-hidden mb-4 w-full h-32 bg-slate-50 shrink-0">
-                                        <img src={post.mediaUrl} alt="AI Generation" className="w-full h-full object-cover" />
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="text-[13px] text-slate-400 font-medium">{formatDate(post.createdAt)}</span>
+                                        <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50/80 px-2.5 py-1 rounded-md">
+                                            {post.tone}
+                                        </span>
                                     </div>
-                                )}
 
-                                <button 
-                                    onClick={() => openScheduleModal(post)}
-                                    className="w-full py-3 bg-[#f1f5f9] hover:bg-[#e2e8f0] hover:text-indigo-600 text-slate-600 text-sm font-medium rounded-xl transition-colors mt-auto"
-                                >
-                                    Schedule Post
-                                </button>
-                            </div>
-                        )
-                    })}
-                </div>
+                                    <p className={`text-slate-700 text-[14px] leading-[1.6] mb-4 ${post.mediaUrl ? 'line-clamp-3' : 'line-clamp-6'}`}>
+                                        {post.content}
+                                    </p>
+
+                                    {post.mediaUrl && (
+                                        <div className="rounded-xl overflow-hidden mb-4 w-full h-32 bg-slate-50 shrink-0">
+                                            <img src={post.mediaUrl} alt="AI Generation" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+
+                                    <button
+                                        onClick={() => openScheduleModal(post)}
+                                        className="w-full py-3 bg-[#f1f5f9] hover:bg-[#e2e8f0] hover:text-indigo-600 text-slate-600 text-sm font-medium rounded-xl transition-colors mt-auto"
+                                    >
+                                        Schedule Post
+                                    </button>
+                                </div>
+                            )
+                        })}
+                    </div>
                 ) : (
                     <div className="bg-white rounded-[1.25rem] border border-gray-100 shadow-sm p-16 flex flex-col items-center justify-center text-center">
                         <div className="bg-indigo-50 p-4 rounded-full mb-5">
@@ -338,25 +339,25 @@ const AIComposer = () => {
                             <div className="flex gap-4">
                                 <div className="flex-1 relative">
                                     <Calendar className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${scheduleErrors.includes('Date') ? 'text-red-400' : 'text-slate-400'}`} />
-                                    <input 
+                                    <input
                                         type="date"
                                         value={scheduleDate}
                                         onChange={(e) => { setScheduleDate(e.target.value); setScheduleErrors(err => err.filter(x => x !== 'Date')); }}
                                         className={`w-full pl-11 pr-4 py-3.5 rounded-xl border outline-none text-[15px] transition-all duration-200
-                                            ${scheduleErrors.includes('Date') 
-                                                ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500' 
+                                            ${scheduleErrors.includes('Date')
+                                                ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500'
                                                 : 'border-gray-100 bg-[#f8fafc] text-slate-600 focus:ring-1 focus:ring-indigo-400'}`}
                                     />
                                 </div>
                                 <div className="flex-1 relative">
                                     <Clock className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${scheduleErrors.includes('Time') ? 'text-red-400' : 'text-slate-400'}`} />
-                                    <input 
+                                    <input
                                         type="time"
                                         value={scheduleTime}
                                         onChange={(e) => { setScheduleTime(e.target.value); setScheduleErrors(err => err.filter(x => x !== 'Time')); }}
                                         className={`w-full pl-11 pr-4 py-3.5 rounded-xl border outline-none text-[15px] transition-all duration-200
-                                            ${scheduleErrors.includes('Time') 
-                                                ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500' 
+                                            ${scheduleErrors.includes('Time')
+                                                ? 'border-red-300 bg-red-50 text-red-900 focus:ring-1 focus:ring-red-500'
                                                 : 'border-gray-100 bg-[#f8fafc] text-slate-600 focus:ring-1 focus:ring-indigo-400'}`}
                                     />
                                 </div>
@@ -370,7 +371,7 @@ const AIComposer = () => {
                                     <span className="font-medium">Please provide: {scheduleErrors.join(', ')}</span>
                                 </div>
                             )}
-                            <button 
+                            <button
                                 onClick={handleSchedule}
                                 disabled={isScheduling}
                                 className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 shadow-sm shadow-indigo-200

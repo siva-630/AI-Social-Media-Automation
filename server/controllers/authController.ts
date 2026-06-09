@@ -89,6 +89,40 @@ export const loginUser = async (
   }
 };
 
+// @desc    Reset password
+// @route   POST /api/auth/reset-password
+// @access  Public
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400);
+      throw new Error("Please provide email and new password");
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Generate JWT
 const generateToken = (id: string) => {
   if (!process.env.JWT_SECRET) {
