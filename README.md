@@ -19,6 +19,56 @@ This application is a complete full-stack, AI-powered social media automation pl
 
 Built with modern software architecture, performance, and security in mind, it provides a highly interactive and visually stunning user experience powered by the latest version of React, Tailwind CSS, and a robust scalable MERN stack backend.
 
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    %% Client Tier
+    subgraph Frontend [Client Layer - Vercel]
+        UI[React UI / Tailwind CSS]
+        Vite[Vite Build System]
+        State[React State / LocalStorage]
+        UI <--> Vite
+        UI <--> State
+    end
+
+    %% Auth Tier
+    subgraph Auth [Authentication]
+        Firebase[Firebase Auth]
+        Google[Google OAuth]
+        Firebase <--> Google
+    end
+
+    %% Backend Tier
+    subgraph Backend [Server Layer - Render]
+        Express[Express.js / Node.js]
+        Controllers[Controllers & Logic]
+        Routes[API Routes]
+        Express --> Routes
+        Routes --> Controllers
+    end
+
+    %% Database Tier
+    subgraph Database [Data Layer]
+        MongoDB[(MongoDB Atlas)]
+    end
+
+    %% External APIs
+    subgraph ExternalServices [Third-Party APIs]
+        AI[AI Text/Image Generators]
+        Social[Social Media APIs: Twitter/LinkedIn]
+    end
+
+    %% Connections
+    UI -- "1. Login Request" --> Firebase
+    UI -- "2. Sends JWT & User Data" --> Routes
+    UI -- "API Fetch Requests (REST)" --> Routes
+    
+    Controllers -- "Mongoose Schema" --> MongoDB
+    Controllers -- "Generate Content" --> AI
+    Controllers -- "Publish Post" --> Social
+```
+
 ## 🛠️ Technologies & Tools
 
 ### Frontend (Client)
