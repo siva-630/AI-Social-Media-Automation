@@ -72,7 +72,7 @@ export default function Pricing() {
                                 ))}
                             </ul>
 
-                            <Link to="/#" className={`mt-auto text-center font-semibold text-sm px-6 py-3 rounded-full ${plan.highlight ? "bg-white text-violet-500 hover:bg-red-50" : "bg-violet-500 text-white hover:bg-violet-600"}`}>
+                            <Link to="/#" className={`mt-auto text-center font-semibold text-sm px-6 py-3 rounded-full ${plan.highlight ? "bg-white text-violet-500 hover:bg-violet-50" : "bg-violet-500 text-white hover:bg-violet-600"}`}>
                                 {plan.cta}
                             </Link>
                         </div>

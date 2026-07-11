@@ -8,7 +8,7 @@ export default function Hero() {
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-size-[56px_56px] pointer-events-none" />
 
             {/* Red soft glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[560px] bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08)_0%,transparent_70%)] pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[560px] bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.08)_0%,transparent_70%)] pointer-events-none" />
 
             <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-12 text-center">
                 {/* Badge */}
@@ -30,11 +30,11 @@ export default function Hero() {
                 {/* CTAs */}
                 <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
                     {localStorage.getItem("token") ? (
-                        <Link to="/dashboard" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
+                        <Link to="/dashboard" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(139,92,246,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
                             Go to Dashboard <ArrowRightIcon className="size-4" />
                         </Link>
                     ) : (
-                        <Link to="/login" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
+                        <Link to="/login" className="bg-violet-500 text-white rounded-full font-medium hover:bg-violet-600 hover:shadow-[0_8px_24px_rgba(139,92,246,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
                             Start for free <ArrowRightIcon className="size-4" />
                         </Link>
                     )}
