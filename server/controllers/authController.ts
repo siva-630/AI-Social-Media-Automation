@@ -123,6 +123,59 @@ export const resetPassword = async (
   }
 };
 
+// @desc    Authenticate with Google
+// @route   POST /api/auth/google
+// @access  Public
+export const googleAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { name, email } = req.body;
+
+    if (!email) {
+      res.status(400);
+      throw new Error("Please provide email");
+    }
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token: generateToken(user._id as string),
+      });
+    } else {
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(generatedPassword, salt);
+
+      user = await User.create({
+        name: name || "Google User",
+        email,
+        password: hashedPassword,
+      });
+
+      if (user) {
+        res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          token: generateToken(user._id as string),
+        });
+      } else {
+        res.status(400);
+        throw new Error("Invalid user data");
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Generate JWT
 const generateToken = (id: string) => {
   if (!process.env.JWT_SECRET) {

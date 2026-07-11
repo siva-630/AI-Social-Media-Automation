@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MailIcon, LockIcon, ArrowRightIcon, User2Icon } from "lucide-react";
 import { toast } from "react-toastify";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../firebase";
 
 export default function Login() {
     const [authMode, setAuthMode] = useState<"login" | "register" | "forgot">("login");
@@ -71,6 +73,46 @@ export default function Login() {
         }
     };
 
+    const handleGoogleSignIn = async () => {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            
+            const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "https://ai-social-media-automation.onrender.com";
+            
+            // Send user details to our custom backend
+            const response = await fetch(`${API_URL}/api/auth/google`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: user.displayName,
+                    email: user.email,
+                    firebaseUid: user.uid,
+                    photoUrl: user.photoURL
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("userId", data._id);
+                localStorage.setItem("userName", data.name);
+                localStorage.setItem("userEmail", data.email);
+                
+                toast.success("Logged in with Google successfully!");
+                navigate("/dashboard");
+            } else {
+                toast.error(data.message || "Google Authentication failed on server");
+            }
+        } catch (error: any) {
+            console.error("Google Sign-In Error:", error);
+            if (error.code !== "auth/popup-closed-by-user") {
+                toast.error("Failed to sign in with Google.");
+            }
+        }
+    };
+
     return (
         <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
             <div className="relative w-full max-w-md">
@@ -133,6 +175,21 @@ export default function Login() {
                             )}
                         </button>
                     </form>
+
+                    <div className="mt-6 flex items-center justify-between">
+                        <span className="w-1/5 border-b border-slate-200 lg:w-1/4"></span>
+                        <span className="text-xs text-center text-slate-500 uppercase">or continue with</span>
+                        <span className="w-1/5 border-b border-slate-200 lg:w-1/4"></span>
+                    </div>
+
+                    <button 
+                        onClick={handleGoogleSignIn}
+                        type="button" 
+                        className="mt-4 w-full py-2.5 px-4 bg-white border border-slate-200 text-slate-700 rounded-full text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                    >
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+                        Sign in with Google
+                    </button>
 
                     <div className="mt-6 text-center text-sm text-slate-500">
                         {authMode === "login" ? (
