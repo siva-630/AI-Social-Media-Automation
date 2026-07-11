@@ -59,7 +59,7 @@ export default function Login() {
                 localStorage.setItem("userId", data._id);
                 localStorage.setItem("userName", data.name);
                 localStorage.setItem("userEmail", data.email);
-                
+
                 toast.success(authMode === "login" ? "Logged in successfully!" : "Account created successfully!");
                 navigate("/dashboard");
             } else {
@@ -77,9 +77,9 @@ export default function Login() {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
-            
+
             const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "https://ai-social-media-automation.onrender.com";
-            
+
             // Send user details to our custom backend
             const response = await fetch(`${API_URL}/api/auth/google`, {
                 method: "POST",
@@ -99,7 +99,7 @@ export default function Login() {
                 localStorage.setItem("userId", data._id);
                 localStorage.setItem("userName", data.name);
                 localStorage.setItem("userEmail", data.email);
-                
+
                 toast.success("Logged in with Google successfully!");
                 navigate("/dashboard");
             } else {
@@ -182,9 +182,9 @@ export default function Login() {
                         <span className="w-1/5 border-b border-slate-200 lg:w-1/4"></span>
                     </div>
 
-                    <button 
+                    <button
                         onClick={handleGoogleSignIn}
-                        type="button" 
+                        type="button"
                         className="mt-4 w-full py-2.5 px-4 bg-white border border-slate-200 text-slate-700 rounded-full text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
                     >
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
@@ -220,3 +220,4 @@ export default function Login() {
         </div>
     );
 }
+// login
