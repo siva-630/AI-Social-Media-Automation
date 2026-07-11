@@ -4,13 +4,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyA8Ug4IkQeVVpea-PSpUesFoQ_IBOXMZiI",
-  authDomain: "social-media-automation-c1df4.firebaseapp.com",
-  projectId: "social-media-automation-c1df4",
-  storageBucket: "social-media-automation-c1df4.firebasestorage.app",
-  messagingSenderId: "142884423932",
-  appId: "1:142884423932:web:0c307ce1744ad458d86f79",
-  measurementId: "G-PYHTF26CLB"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
