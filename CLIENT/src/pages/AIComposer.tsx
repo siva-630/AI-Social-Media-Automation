@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { History, ArrowRight, X, Calendar, Clock, Loader2, AlertCircle } from 'lucide-react';
+import { History, ArrowRight, X, Calendar, Clock, Loader2, AlertCircle, Trash2 } from 'lucide-react';
 import { PLATFORMS } from '../assets/assets';
 import { toast } from 'react-toastify';
 
 const TONES = ['Professional', 'Creative', 'Funny', 'Minimalist', 'Excited'];
+const LANGUAGES = ['English', 'Telugu', 'Hindi', 'Tamil', 'Spanish', 'French'];
+const SIZES = ['Square', 'Landscape', 'Portrait'];
 const API_URL = import.meta.env.DEV ? "http://localhost:3000" : "https://ai-social-media-automation.onrender.com";
 
 interface GenerationPost {
@@ -22,6 +24,8 @@ const AIComposer = () => {
     const [idea, setIdea] = useState('');
     const [aiImage, setAiImage] = useState(true);
     const [selectedTone, setSelectedTone] = useState('Professional');
+    const [selectedLanguage, setSelectedLanguage] = useState('English');
+    const [selectedSize, setSelectedSize] = useState('Square');
     const [isGenerating, setIsGenerating] = useState(false);
     const [generations, setGenerations] = useState<GenerationPost[]>([]);
     const [connectedAccounts, setConnectedAccounts] = useState<any[]>([]);
@@ -68,7 +72,7 @@ const AIComposer = () => {
             const response = await fetch(`${API_URL}/api/generations/generate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: idea, tone: selectedTone, generateImage: aiImage, userId })
+                body: JSON.stringify({ prompt: idea, tone: selectedTone, generateImage: aiImage, userId, language: selectedLanguage, imageSize: selectedSize })
             });
             const data = await response.json();
             if (response.ok && data.generation) {
@@ -159,6 +163,23 @@ const AIComposer = () => {
         });
     };
 
+    const handleDeleteGeneration = async (id: string) => {
+        try {
+            const response = await fetch(`${API_URL}/api/generations/${id}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                setGenerations(generations.filter(gen => gen._id !== id));
+                toast.success("Generation deleted successfully");
+            } else {
+                toast.error("Failed to delete generation");
+            }
+        } catch (error) {
+            console.error("Failed to delete:", error);
+            toast.error("Error connecting to server");
+        }
+    };
+
     return (
         <div className="max-w-[1200px] mx-auto p-4 md:p-6 lg:p-8 min-h-screen pb-20">
             {/* Header */}
@@ -175,6 +196,30 @@ const AIComposer = () => {
                     className="w-full h-24 bg-transparent resize-none outline-none text-slate-700 placeholder-slate-400 text-[15px] mb-4 p-2 focus:ring-0"
                 />
                 <div className="flex justify-end items-center gap-4">
+                    {/* Language Selector */}
+                    <select 
+                        value={selectedLanguage}
+                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                        className="bg-slate-50 border border-gray-200 text-slate-700 rounded-[0.8rem] px-3 py-2 text-[13px] font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    >
+                        {LANGUAGES.map(lang => (
+                            <option key={lang} value={lang}>{lang}</option>
+                        ))}
+                    </select>
+
+                    {/* Image Size Selector */}
+                    {aiImage && (
+                        <select 
+                            value={selectedSize}
+                            onChange={(e) => setSelectedSize(e.target.value)}
+                            className="bg-slate-50 border border-gray-200 text-slate-700 rounded-[0.8rem] px-3 py-2 text-[13px] font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                        >
+                            {SIZES.map(size => (
+                                <option key={size} value={size}>{size}</option>
+                            ))}
+                        </select>
+                    )}
+
                     {/* AI Image Toggle */}
                     <div className="flex items-center gap-3 bg-indigo-50/80 px-4 py-2 rounded-[0.8rem]">
                         <span className="text-[13px] font-semibold text-slate-800">AI Image</span>
@@ -241,9 +286,18 @@ const AIComposer = () => {
                                 <div key={post._id} className={`bg-white rounded-[1.25rem] p-5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.04)] hover:shadow-md transition-all flex flex-col h-full border ${isHighlighted ? 'border-indigo-100' : 'border-gray-100'}`}>
                                     <div className="flex justify-between items-center mb-4">
                                         <span className="text-[13px] text-slate-400 font-medium">{formatDate(post.createdAt)}</span>
-                                        <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50/80 px-2.5 py-1 rounded-md">
-                                            {post.tone}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50/80 px-2.5 py-1 rounded-md">
+                                                {post.tone}
+                                            </span>
+                                            <button 
+                                                onClick={() => handleDeleteGeneration(post._id)}
+                                                className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-1 rounded-md transition-colors"
+                                                title="Delete generation"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <p className={`text-slate-700 text-[14px] leading-[1.6] mb-4 ${post.mediaUrl ? 'line-clamp-3' : 'line-clamp-6'}`}>
@@ -300,8 +354,8 @@ const AIComposer = () => {
                             <div className="bg-[#f8fafc] rounded-[1rem] p-5 border border-gray-100 whitespace-pre-wrap">
                                 <p className="text-slate-700 text-[15px] leading-relaxed">{selectedPost.content}</p>
                                 {selectedPost.mediaUrl && (
-                                    <div className="mt-4 rounded-xl overflow-hidden max-h-[300px] border border-gray-200">
-                                        <img src={selectedPost.mediaUrl} alt="Generated Media" className="w-full h-full object-cover" />
+                                    <div className="mt-4 rounded-xl overflow-hidden border border-gray-200 bg-slate-50 flex justify-center">
+                                        <img src={selectedPost.mediaUrl} alt="Generated Media" className="w-full h-auto max-h-[500px] object-contain" />
                                     </div>
                                 )}
                             </div>

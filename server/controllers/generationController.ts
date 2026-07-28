@@ -8,7 +8,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export const generatePostContent = async (req: Request, res: Response) => {
     try {
-        const { prompt, tone = "Professional", generateImage = true, userId } = req.body;
+        const { prompt, tone = "Professional", generateImage = true, userId, language = "English", imageSize = "Square" } = req.body;
 
         if (!prompt) {
             return res.status(400).json({ message: "Prompt is required" });
@@ -25,7 +25,7 @@ export const generatePostContent = async (req: Request, res: Response) => {
         const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
         
         const fullPrompt = `Write a very concise and simple social media post about: "${prompt}". 
-        Use a ${tone} tone. Keep it short, direct, and summarizing. Do not include any explanations or extra conversational text. 
+        Use a ${tone} tone and write it in ${language} language. Keep it short, direct, and summarizing. Do not include any explanations or extra conversational text. 
         Add relevant hashtags at the very bottom.`;
 
         const result = await model.generateContent(fullPrompt);
@@ -42,6 +42,10 @@ export const generatePostContent = async (req: Request, res: Response) => {
                 const imageBlob = await hfClient.textToImage({
                     model: "black-forest-labs/FLUX.1-schnell",
                     inputs: imagePrompt,
+                    parameters: { 
+                        width: imageSize === "Landscape" ? 1024 : (imageSize === "Portrait" ? 768 : 1024), 
+                        height: imageSize === "Landscape" ? 576 : 1024 
+                    }
                 });
 
                 const arrayBuffer = await imageBlob.arrayBuffer();
@@ -99,5 +103,19 @@ export const getGenerations = async (req: Request, res: Response) => {
     } catch (error: any) {
         console.error("Error fetching generations:", error);
         res.status(500).json({ message: "Server error while fetching generations" });
+    }
+};
+
+export const deleteGeneration = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const deleted = await Generation.findByIdAndDelete(id);
+        if (!deleted) {
+            return res.status(404).json({ message: "Generation not found" });
+        }
+        res.status(200).json({ message: "Generation deleted successfully" });
+    } catch (error: any) {
+        console.error("Error deleting generation:", error);
+        res.status(500).json({ message: "Server error while deleting generation" });
     }
 };

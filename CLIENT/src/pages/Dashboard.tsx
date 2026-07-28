@@ -32,6 +32,13 @@ const Dashboard = () => {
     }
     fetchDashboardData();
   }, [])
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
   const statCards = [
     {
       label: "Scheduled Posts",
@@ -56,7 +63,7 @@ const Dashboard = () => {
 
   <div>
           <div className="space-y-8">
-      <h2 className="text-2xl text-slate-900 ">Good morning</h2>
+      <h2 className="text-2xl text-slate-900 ">{getGreeting()}</h2>
       <p className="text-slate-500 text-sm mt-0.5">Here's what is happening with your social accounts today.</p>
     </div>
       
