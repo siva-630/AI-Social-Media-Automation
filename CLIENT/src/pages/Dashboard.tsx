@@ -88,7 +88,7 @@ const Dashboard = () => {
 
       {/* Activity feed */}
 
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden ">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden mt-8">
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <h2 className="text-slate-900 ">Recent Activity</h2>
