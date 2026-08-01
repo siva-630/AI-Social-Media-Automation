@@ -67,7 +67,7 @@ export default function Pricing() {
                                         <div className={`size-4 rounded-full flex items-center justify-center shrink-0 ${plan.highlight ? "bg-violet-400" : "bg-violet-50"}`}>
                                             <CheckIcon className={`w-2.5 h-2.5 ${plan.highlight ? "text-white" : "text-violet-500"}`} />
                                         </div>
-                                        <span className={plan.highlight ? "text-red-50" : "text-slate-600"}>{f}</span>
+                                        <span className={plan.highlight ? "text-white" : "text-slate-600"}>{f}</span>
                                     </li>
                                 ))}
                             </ul>
