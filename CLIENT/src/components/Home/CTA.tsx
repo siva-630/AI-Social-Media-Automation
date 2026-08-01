@@ -12,8 +12,8 @@ export default function CTA() {
                         border: "1.5px solid rgba(139,92,246,0.12)",
                     }}
                 >
-                    {/* Glow blobs */}
-                    <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none" style={{background: "radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)" }} />
+
+                    <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)" }} />
                     <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)" }} />
 
                     <div className="relative">
