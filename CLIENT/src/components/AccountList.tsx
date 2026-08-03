@@ -54,11 +54,10 @@ const AccountList = ({ account, onDisconnect }: AccountListProps) => {
               <button
                 onClick={() => handleDisconnect(acc._id)}
                 disabled={disconnectingId === acc._id}
-                className={`transition-colors p-1.5 rounded-md ${
-                  disconnectingId === acc._id 
-                    ? 'text-violet-600 bg-violet-50 shadow-sm' 
+                className={`transition-colors p-1.5 rounded-md ${disconnectingId === acc._id
+                    ? 'text-violet-600 bg-violet-50 shadow-sm'
                     : 'text-slate-500 hover:text-violet-500 hover:bg-slate-50'
-                }`}
+                  }`}
                 title="Disconnect account"
               >
                 <Unplug className="w-4 h-4" />
@@ -72,4 +71,3 @@ const AccountList = ({ account, onDisconnect }: AccountListProps) => {
 }
 
 export default AccountList
-// 
