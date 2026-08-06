@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 const footerLinks = {
-    Product: ["Features", "How it works", "Pricing", "Changelog"],
+    Product: ["Features", "How it works", "Pricing"],
     Company: ["About", "Blog", "Careers", "Press"],
     Legal: ["Privacy", "Terms", "Security", "Cookies"],
 };
@@ -25,13 +25,16 @@ export default function Footer() {
                         <div key={category}>
                             <div className="text-xs font-semibold uppercase tracking-widest mb-5 text-gray-600">{category}</div>
                             <ul className="space-y-1">
-                                {links.map((link) => (
-                                    <li key={link}>
-                                        <a href="#" className="text-sm text-gray-500 hover:text-gray-900">
-                                            {link}
-                                        </a>
-                                    </li>
-                                ))}
+                                {links.map((link) => {
+                                    const href = `#${link.toLowerCase().replace(/\s+/g, '-')} `;
+                                    return (
+                                        <li key={link}>
+                                            <a href={href} className="text-sm text-gray-500 hover:text-gray-900">
+                                                {link}
+                                            </a>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     ))}
