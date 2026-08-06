@@ -19,7 +19,7 @@ export default function Hero() {
 
                 {/* Headline */}
                 <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl xl:text-8xl text-slate-900">
-                Plan Once.
+                    Plan Once.
                     <br />
                     <span className="text-violet-600 italic">Publish Everywhere.</span>
                 </h1>
@@ -60,12 +60,12 @@ export default function Hero() {
                     {/* Mock content */}
                     <div className="p-6" style={{ background: "#f7f7f7" }}>
                         {/* Stat row */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
                             {[
-                                { val: "12", label: "Scheduled" },
-                                { val: "48", label: "Published" },
-                                { val: "4", label: "Accounts" },
-                                { val: "3", label: "AI Rules" },
+                                { val: "10", label: "Scheduled" },
+                                { val: "20", label: "Published" },
+                                { val: "2", label: "Accounts" },
+
                             ].map((s) => (
                                 <div key={s.label} className="rounded-xl p-4 bg-white" style={{ border: "1px solid rgba(0,0,0,0.06)" }}>
                                     <div className="text-2xl font-bold text-gray-900 tabular-nums">{s.val}</div>
@@ -78,9 +78,9 @@ export default function Hero() {
                         <div className="rounded-xl p-4 space-y-3 bg-white" style={{ border: "1px solid rgba(0,0,0,0.06)" }}>
                             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Recent Activity</div>
                             {[
-                                { text: "Post published to LinkedIn & Facebook", time: "2m ago" },
-                                { text: "AI replied to 3 comments", time: "15m ago" },
-                                { text: "New post scheduled for tomorrow 9am", time: "1h ago" },
+                                { text: "Post published to Instagram", time: "5m ago" },
+                                { text: "Deleted a scheduled post", time: "10m ago" },
+                                { text: "New post scheduled for tomorrow 11am", time: "1h ago" },
                             ].map((item) => (
                                 <div key={item.text} className="flex items-center gap-3">
                                     <DotIcon className="size-5 text-gray-300" />
