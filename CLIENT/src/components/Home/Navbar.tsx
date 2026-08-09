@@ -33,12 +33,12 @@ export default function Navbar() {
                             Sign In
                         </Link>
                         <Link
-    to="/login"
-    className="flex items-center gap-1.5 text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-full shadow-sm hover:shadow-violet-200 hover:shadow-md"
->
-    Get Started
-    <ArrowRightIcon className="size-3.5" />
-</Link>
+                            to="/login"
+                            className="flex items-center gap-1.5 text-sm bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-full shadow-sm hover:shadow-violet-200 hover:shadow-md"
+                        >
+                            Get Started
+                            <ArrowRightIcon className="size-3.5" />
+                        </Link>
                     </div>
                 )}
             </div>

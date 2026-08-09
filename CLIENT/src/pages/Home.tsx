@@ -6,6 +6,7 @@ import HowItWorks from "../components/Home/HowItWorks";
 import Pricing from "../components/Home/Pricing";
 import CTA from "../components/Home/CTA";
 import Footer from "../components/Home/Footer";
+import Testimonials from "../components/Home/Testimonials";
 
 export default function Landing() {
     return (
@@ -14,7 +15,7 @@ export default function Landing() {
             <Hero />
             <Features />
             <HowItWorks />
-            {/* <Testimonials /> */}
+            <Testimonials />
             <Pricing />
             <CTA />
             <Footer />
