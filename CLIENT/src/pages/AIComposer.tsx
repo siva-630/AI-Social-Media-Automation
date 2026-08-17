@@ -195,7 +195,7 @@ const AIComposer = () => {
                     placeholder="Share your idea... (e.g. A post about the launch of our new eco-friendly coffee beans)"
                     className="w-full h-24 bg-transparent resize-none outline-none text-slate-700 placeholder-slate-400 text-[15px] mb-4 p-2 focus:ring-0"
                 />
-                <div className="flex justify-end items-center gap-4">
+                <div className="flex flex-wrap justify-end items-center gap-3 sm:gap-4 mt-2">
                     {/* Language Selector */}
                     <select 
                         value={selectedLanguage}
@@ -234,7 +234,7 @@ const AIComposer = () => {
                     <button
                         onClick={handleGenerate}
                         disabled={isGenerating || !idea.trim()}
-                        className={`bg-indigo-600 text-white px-6 py-2.5 rounded-[0.8rem] font-medium flex items-center gap-2 transition-all shadow-sm shadow-indigo-200
+                        className={`bg-indigo-600 text-white px-6 py-2.5 rounded-[0.8rem] font-medium flex items-center justify-center gap-2 transition-all shadow-sm shadow-indigo-200 w-full sm:w-auto
                             ${(isGenerating || !idea.trim()) ? 'opacity-70 cursor-not-allowed' : 'hover:bg-indigo-700'}`}
                     >
                         {isGenerating ? (
@@ -390,7 +390,7 @@ const AIComposer = () => {
                             </div>
 
                             {/* Date & Time */}
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-4">
                                 <div className="flex-1 relative">
                                     <Calendar className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors duration-200 ${scheduleErrors.includes('Date') ? 'text-red-400' : 'text-slate-400'}`} />
                                     <input

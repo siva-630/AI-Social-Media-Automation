@@ -299,7 +299,7 @@ const Scheduler = () => {
                     </div>
 
                     {/* Date & Time */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1 flex flex-col gap-2">
                             <div className="flex justify-between items-center">
                                 <label className="text-xs font-bold text-gray-400 tracking-wider">DATE</label>
