@@ -48,9 +48,9 @@ export default function Pricing() {
                     <p className="mt-5 text-gray-500 max-w-md mx-auto">Start free, upgrade when you're ready. Cancel anytime — no hidden fees.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
                     {pricingPlans.map((plan) => (
-                        <div key={plan.name} className={`rounded-2xl border p-7 flex flex-col gap-6 relative ${plan.highlight ? "bg-violet-500 text-white border-violet-400 shadow-2xl shadow-red-100" : "bg-white text-slate-900 border-slate-200"}`}>
+                        <div key={plan.name} className={`rounded-2xl border p-7 flex flex-col gap-6 relative h-full ${plan.highlight ? "bg-violet-500 text-white border-violet-400 shadow-2xl shadow-violet-200" : "bg-white text-slate-900 border-slate-200"}`}>
                             {plan.highlight && <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold px-3.5 py-1.5 rounded-full">Most Popular</div>}
                             <div>
                                 <div className={`text-sm font-semibold mb-1 ${plan.highlight ? "text-violet-100" : "text-violet-500"}`}>{plan.name}</div>

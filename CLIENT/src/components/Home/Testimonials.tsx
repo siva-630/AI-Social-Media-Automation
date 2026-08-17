@@ -5,7 +5,7 @@ const testimonials = [
         name: "siva",
         role: "Marketing Manager",
         avatar: "S",
-        avatarBg: "from-red-400 to-pink-400",
+        avatarBg: "from-violet-400 to-fuchsia-400",
         text: "Scheduler has saved our team 10+ hours a week. The AI composer is genuinely impressive — it writes content that sounds like us.",
     },
     {

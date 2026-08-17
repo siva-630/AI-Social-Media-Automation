@@ -24,7 +24,7 @@ export default function HowItWorks() {
                 <div className="space-y-6">
                     {steps.map((s, i) => (
                         <div key={s.step} className="flex gap-6 items-start">
-                            <div className="shrink-0 size-12 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
+                            <div className="shrink-0 size-12 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center">
                                 <span className="text-sm font-medium text-violet-500">{s.step}</span>
                             </div>
                             <div className="pt-1">
